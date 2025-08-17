@@ -12,6 +12,7 @@ import {
   TooltipTrigger,
 } from "./tooltip"
 import { Button, type ButtonProps } from "./button"
+import { useIsMobile } from "@/hooks/use-mobile"
 
 const SIDEBAR_WIDTH_VAR = "--sidebar-width"
 const SIDEBAR_WIDTH_ICON_VAR = "--sidebar-width-icon"
@@ -86,7 +87,6 @@ export const Sidebar = React.forwardRef<
     side?: "left" | "right"
     collapsible?: "icon" | "button"
     isCollapsed: boolean
-    isMobile: boolean
     onCollapse?: (collapsed: boolean) => void
   }
 >(
@@ -97,12 +97,12 @@ export const Sidebar = React.forwardRef<
       collapsible = "icon",
       onCollapse,
       isCollapsed,
-      isMobile,
       ...props
     },
     ref
   ) => {
-
+    const { isMobile } = useSidebar();
+    
     const handleCollapse = React.useCallback(() => {
         onCollapse?.(!isCollapsed);
     },[isCollapsed, onCollapse])
@@ -112,10 +112,6 @@ export const Sidebar = React.forwardRef<
     }
     
     return (
-      <SidebarProvider
-        isCollapsed={isCollapsed}
-        isMobile={isMobile}
-      >
         <div
           ref={ref}
           className={cn(
@@ -140,7 +136,6 @@ export const Sidebar = React.forwardRef<
             />
           )}
         </div>
-      </SidebarProvider>
     )
   }
 )

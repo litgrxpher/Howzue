@@ -18,6 +18,7 @@ import {
 import { Logo } from './logo';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from './ui/button';
+import { cn } from '@/lib/utils';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: Home },
