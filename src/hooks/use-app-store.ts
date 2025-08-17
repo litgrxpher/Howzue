@@ -3,21 +3,8 @@
 
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { differenceInCalendarDays, isSameDay, startOfWeek, subDays } from 'date-fns';
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  getDocs,
-  query,
-  where,
-  orderBy,
-  deleteDoc,
-  writeBatch,
-  doc,
-} from 'firebase/firestore';
 import type { JournalEntry, Settings } from '@/lib/types';
 import { useAuth } from './use-auth';
-import { db } from '@/lib/firebase';
 
 interface AppState {
   entries: JournalEntry[];
@@ -35,107 +22,63 @@ export const defaultSettings: Settings = {
   theme: 'system',
 };
 
-export const useApp = () => {
-  const { user } = useAuth();
-  const [entries, setEntries] = useState<JournalEntry[]>([]);
-  const [settings, setSettings] = useState<Settings>(defaultSettings);
-  const [isStoreLoaded, setIsStoreLoaded] = useState(false);
-
-  // Fetch entries from Firestore when user is logged in
-  useEffect(() => {
-    if (user) {
-      const fetchEntries = async () => {
-        try {
-          const entriesCollection = collection(db, 'users', user.id, 'entries');
-          const q = query(entriesCollection, orderBy('date', 'desc'));
-          const querySnapshot = await getDocs(q);
-          const userEntries = querySnapshot.docs.map(doc => ({
-            id: doc.id,
-            ...doc.data(),
-          })) as JournalEntry[];
-          setEntries(userEntries);
-        } catch (error) {
-          console.error('Failed to fetch entries from Firestore', error);
-        }
-      };
-      fetchEntries();
-    } else {
-      // Clear entries when user logs out
-      setEntries([]);
-    }
-  }, [user]);
-
-  // Load settings from local storage
-  useEffect(() => {
+const useLocalStore = <T>(key: string, initialValue: T): [T, (value: T) => void] => {
+  const [storedValue, setStoredValue] = useState<T>(() => {
     try {
-      const storedSettings = localStorage.getItem('howzue-settings');
-      if (storedSettings) {
-        setSettings(JSON.parse(storedSettings));
+      if (typeof window === 'undefined') {
+        return initialValue;
+      }
+      const item = window.localStorage.getItem(key);
+      return item ? JSON.parse(item) : initialValue;
+    } catch (error) {
+      console.error(error);
+      return initialValue;
+    }
+  });
+
+  const setValue = (value: T) => {
+    try {
+      const valueToStore = value instanceof Function ? value(storedValue) : value;
+      setStoredValue(valueToStore);
+      if (typeof window !== 'undefined') {
+        window.localStorage.setItem(key, JSON.stringify(valueToStore));
       }
     } catch (error) {
-      console.error('Failed to load settings from localStorage', error);
+      console.error(error);
     }
+  };
+
+  return [storedValue, setValue];
+};
+
+
+export const useApp = () => {
+  const { user } = useAuth();
+  const [entries, setEntries] = useLocalStore<JournalEntry[]>(`howzue-entries-${user?.id || 'guest'}`, []);
+  const [settings, setSettings] = useLocalStore<Settings>('howzue-settings', defaultSettings);
+  const [isStoreLoaded, setIsStoreLoaded] = useState(false);
+
+  useEffect(() => {
     setIsStoreLoaded(true);
   }, []);
 
-  // Save settings to local storage
-  useEffect(() => {
-    if (isStoreLoaded) {
-      localStorage.setItem('howzue-settings', JSON.stringify(settings));
-    }
-  }, [settings, isStoreLoaded]);
-
   const addEntry = useCallback(async (newEntryData: Omit<JournalEntry, 'id' | 'date'>) => {
-    if (!user) {
-      console.error('User not logged in, cannot add entry');
-      return;
-    }
-
-    const newEntry: Omit<JournalEntry, 'id'> = {
+    const newEntry: JournalEntry = {
+      id: new Date().toISOString(), // Simple unique ID
       ...newEntryData,
       date: new Date().toISOString(),
     };
     
-    try {
-      const entriesCollection = collection(db, 'users', user.id, 'entries');
-      const docRef = await addDoc(entriesCollection, newEntry);
-      
-      const addedEntry: JournalEntry = {
-        id: docRef.id,
-        ...newEntry
-      }
-
-      setEntries(prevEntries => [addedEntry, ...prevEntries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
-
-    } catch (error) {
-      console.error('Error adding document: ', error);
-    }
-  }, [user]);
+    setEntries([newEntry, ...entries]);
+  }, [entries, setEntries]);
 
   const updateSettings = (newSettings: Settings) => {
     setSettings(newSettings);
   };
 
   const deleteAllData = useCallback(async () => {
-    if (!user) {
-      console.error('User not logged in, cannot delete data');
-      return;
-    }
-    try {
-      const entriesCollection = collection(db, 'users', user.id, 'entries');
-      const querySnapshot = await getDocs(entriesCollection);
-      
-      const batch = writeBatch(db);
-      querySnapshot.forEach(document => {
-        batch.delete(doc(db, 'users', user.id, 'entries', document.id));
-      });
-      
-      await batch.commit();
-      setEntries([]);
-    } catch (error) {
-      console.error('Error deleting all documents: ', error);
-    }
-  }, [user]);
+    setEntries([]);
+  }, [setEntries]);
   
   const streak = useMemo(() => {
     if (entries.length === 0) return 0;

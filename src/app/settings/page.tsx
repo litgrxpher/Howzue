@@ -49,7 +49,7 @@ export default function SettingsPage() {
     await deleteAllData();
     toast({
       title: 'Data Deleted',
-      description: 'All your journal entries have been deleted from your account.',
+      description: 'All your journal entries have been deleted from this device.',
     });
   };
 
@@ -106,9 +106,9 @@ export default function SettingsPage() {
             <div className="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800/50">
                 <Info className="w-5 h-5 mt-1 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                 <div>
-                    <h3 className="font-semibold text-blue-800 dark:text-blue-300">Your Data is Secure in the Cloud</h3>
+                    <h3 className="font-semibold text-blue-800 dark:text-blue-300">Your Data is Stored Locally</h3>
                     <p className="text-sm text-blue-700 dark:text-blue-400/80">
-                    All your journal entries and mood data are securely stored in your private Firebase account and encrypted in transit and at rest. When you use AI features, anonymized text may be sent to our AI provider to generate insights.
+                    All your journal entries and mood data are stored securely in your browser's local storage. Your data does not leave your device. When you use AI features, anonymized text may be sent to our AI provider to generate insights.
                     </p>
                 </div>
             </div>
@@ -122,14 +122,14 @@ export default function SettingsPage() {
             <AlertDialogTrigger asChild>
               <Button variant="destructive" className="shadow-md w-full sm:w-auto">
                 <Trash2 className="mr-2" />
-                Delete All Account Data
+                Delete All Data
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete all your journal entries from your account in the cloud.
+                  This action cannot be undone. This will permanently delete all your journal entries from this device.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

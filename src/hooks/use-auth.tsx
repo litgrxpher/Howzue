@@ -2,15 +2,6 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
-import {
-  getAuth,
-  onAuthStateChanged,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-  signOut,
-  type User as FirebaseUser,
-} from 'firebase/auth';
-import { auth } from '@/lib/firebase';
 
 interface User {
   id: string;
@@ -32,31 +23,31 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthLoaded, setIsAuthLoaded] = useState(false);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
-      if (firebaseUser) {
-        setUser({
-          id: firebaseUser.uid,
-          email: firebaseUser.email,
-        });
-      } else {
-        setUser(null);
-      }
-      setIsAuthLoaded(true);
-    });
-
-    return () => unsubscribe();
+    // Simulate checking auth status
+    const storedUser = localStorage.getItem('howzue-user');
+    if (storedUser) {
+        setUser(JSON.parse(storedUser));
+    }
+    setIsAuthLoaded(true);
   }, []);
 
   const login = async (email: string, password: string) => {
-    await signInWithEmailAndPassword(auth, email, password);
+    // This is a mock login. In a real app, you'd validate this.
+    const mockUser = { id: 'local-user', email };
+    localStorage.setItem('howzue-user', JSON.stringify(mockUser));
+    setUser(mockUser);
   };
 
   const signup = async (email: string, password: string) => {
-    await createUserWithEmailAndPassword(auth, email, password);
+    // This is a mock signup.
+    const mockUser = { id: 'local-user', email };
+    localStorage.setItem('howzue-user', JSON.stringify(mockUser));
+    setUser(mockUser);
   };
 
   const logout = async () => {
-    await signOut(auth);
+    localStorage.removeItem('howzue-user');
+    setUser(null);
   };
 
   const authState: AuthState = useMemo(() => ({
