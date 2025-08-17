@@ -112,7 +112,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             )}
         >
             <header className="sticky top-0 z-10 flex items-center h-14 bg-background/80 backdrop-blur-sm border-b px-4 md:hidden">
-            <SidebarTrigger asChild onClick={() => setIsSidebarOpen(true)}>
+            <SidebarTrigger asChild>
                 <Button variant="ghost" size="icon">
                     <Menu />
                 </Button>

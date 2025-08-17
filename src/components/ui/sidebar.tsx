@@ -115,7 +115,7 @@ export const Sidebar = React.forwardRef<
       if (!isOpen) return null;
 
       return (
-        <>
+        <SidebarProvider isCollapsed={false} isMobile={isMobile}>
            <div
             ref={ref}
             className={cn(
@@ -140,7 +140,7 @@ export const Sidebar = React.forwardRef<
             {props.children}
           </div>
           <SidebarOverlay onCollapse={() => onOpenChange?.(false)} />
-        </>
+        </SidebarProvider>
       )
     }
     
@@ -354,33 +354,12 @@ export const SidebarMenuButton = React.forwardRef<
 SidebarMenuButton.displayName = "SidebarMenuButton"
 
 export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  (props, ref) => {
-    const { isMobile } = useSidebar();
-    const { onClick, ...rest } = props;
-    const sidebar = React.useContext(SidebarContext) as any
+  ({ onClick, ...props }, ref) => {
+    const { onOpenChange } =
+      React.useContext(SidebarContext) as any
+    const { ...rest } = props
     
-    if (!isMobile) {
-      return null
-    }
-
-    return (
-      <Button
-        ref={ref}
-        {...rest}
-        onClick={(e) => {
-          const { onOpenChange, isOpen } = (e.currentTarget as any).closest("[data-sidebar-root]")?.context ?? {};
-          const parentSidebar = (e.currentTarget as any).closest<HTMLDivElement>("[data-sidebar-root]")?.parentElement?.querySelector<HTMLDivElement>("[data-sidebar]");
-          
-          if(parentSidebar){
-            const parentContext = (parentSidebar as any).context
-            parentContext.onOpenChange?.(!parentContext.isOpen)
-          }
-
-          sidebar.onOpenChange?.(!sidebar.isOpen)
-          onClick?.(e);
-        }}
-      />
-    )
+    return <Button ref={ref} {...rest} onClick={onClick} />
   }
 )
 
