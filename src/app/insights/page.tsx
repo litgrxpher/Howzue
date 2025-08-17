@@ -1,3 +1,4 @@
+
 'use client';
 
 import { AiSummary } from '@/components/ai-summary';
@@ -8,7 +9,7 @@ import { BrainCircuit, LineChart, Lightbulb } from 'lucide-react';
 import React from 'react';
 
 export default function InsightsPage() {
-  const { entries, settings } = useAppStore();
+  const { entries } = useAppStore();
 
   return (
     <div className="flex flex-col gap-8">
@@ -42,22 +43,20 @@ export default function InsightsPage() {
         </CardContent>
       </Card>
       
-      {settings.enableAiInsights && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <BrainCircuit />
-              AI-Powered Summary
-            </CardTitle>
-            <CardDescription>
-              An analysis of your recent entries to highlight mood patterns and potential triggers.
-            </CardDescription>
-          </CardHeader>
-          <CardContent>
-            <AiSummary entries={entries} />
-          </CardContent>
-        </Card>
-      )}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BrainCircuit />
+            AI-Powered Summary
+          </CardTitle>
+          <CardDescription>
+            An analysis of your recent entries to highlight mood patterns and potential triggers.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <AiSummary entries={entries} />
+        </CardContent>
+      </Card>
     </div>
   );
 }

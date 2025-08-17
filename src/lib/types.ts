@@ -1,3 +1,4 @@
+
 export type Mood = 'great' | 'good' | 'okay' | 'bad' | 'awful';
 export type Theme = 'light' | 'dark' | 'system';
 
@@ -9,7 +10,6 @@ export interface JournalEntry {
 }
 
 export interface Settings {
-  enableAiInsights: boolean;
   theme: Theme;
 }
 

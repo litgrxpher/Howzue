@@ -18,7 +18,6 @@ interface AppState {
 export const AppContext = createContext<AppState | undefined>(undefined);
 
 export const defaultSettings: Settings = {
-  enableAiInsights: true,
   theme: 'system',
 };
 

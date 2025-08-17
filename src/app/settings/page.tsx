@@ -11,7 +11,6 @@ import {
   CardTitle,
 } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
-import { Switch } from '@/components/ui/switch';
 import {
   Select,
   SelectContent,
@@ -38,10 +37,6 @@ export default function SettingsPage() {
   const { settings, updateSettings, deleteAllData } = useAppStore();
   const { toast } = useToast();
 
-  const handleAiToggle = (checked: boolean) => {
-    updateSettings({ ...settings, enableAiInsights: checked });
-  };
-
   const handleThemeChange = (theme: Theme) => {
     updateSettings({ ...settings, theme });
   };
@@ -66,19 +61,6 @@ export default function SettingsPage() {
           <CardDescription>Customize your Howzue experience.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
-          <div className="flex items-center justify-between space-x-2">
-            <Label htmlFor="ai-insights" className="flex flex-col space-y-1">
-              <span>Enable AI Insights</span>
-              <span className="font-normal leading-snug text-muted-foreground">
-                Get AI-powered summaries and reflection prompts.
-              </span>
-            </Label>
-            <Switch
-              id="ai-insights"
-              checked={settings.enableAiInsights}
-              onCheckedChange={handleAiToggle}
-            />
-          </div>
           <div className="flex items-center justify-between space-x-2">
             <Label htmlFor="theme" className="flex flex-col space-y-1">
               <span>Theme</span>
