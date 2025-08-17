@@ -53,8 +53,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     localStorage.removeItem('howzue-user');
   };
 
+  const authState: AuthState = { user, isAuthLoaded, login, signup, logout };
+
   return (
-    <AuthContext.Provider value={{ user, isAuthLoaded, login, signup, logout }}>
+    <AuthContext.Provider value={authState}>
       {children}
     </AuthContext.Provider>
   );
