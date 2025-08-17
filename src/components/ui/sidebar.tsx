@@ -356,7 +356,8 @@ SidebarMenuButton.displayName = "SidebarMenuButton"
 export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
     const { isMobile } = useSidebar();
-    const { onClick } = props;
+    const { onClick, ...rest } = props;
+    const sidebar = React.useContext(SidebarContext) as any
     
     if (!isMobile) {
       return null
@@ -365,10 +366,17 @@ export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
     return (
       <Button
         ref={ref}
-        {...props}
+        {...rest}
         onClick={(e) => {
           const { onOpenChange, isOpen } = (e.currentTarget as any).closest("[data-sidebar-root]")?.context ?? {};
-          onOpenChange?.(!isOpen);
+          const parentSidebar = (e.currentTarget as any).closest<HTMLDivElement>("[data-sidebar-root]")?.parentElement?.querySelector<HTMLDivElement>("[data-sidebar]");
+          
+          if(parentSidebar){
+            const parentContext = (parentSidebar as any).context
+            parentContext.onOpenChange?.(!parentContext.isOpen)
+          }
+
+          sidebar.onOpenChange?.(!sidebar.isOpen)
           onClick?.(e);
         }}
       />

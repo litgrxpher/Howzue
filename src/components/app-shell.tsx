@@ -69,7 +69,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
 
   React.useEffect(() => {
-    setIsSidebarCollapsed(isMobile);
+    if (isMobile) {
+      setIsSidebarCollapsed(true);
+    }
   }, [isMobile]);
   
   const sidebarContent = (
@@ -92,11 +94,11 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <SidebarProvider isCollapsed={isSidebarCollapsed} isMobile={isMobile}>
+    <SidebarProvider isCollapsed={isSidebarCollapsed || false} isMobile={isMobile || false}>
         <Sidebar
             isOpen={isSidebarOpen}
             onOpenChange={setIsSidebarOpen}
-            isCollapsed={isSidebarCollapsed}
+            isCollapsed={isSidebarCollapsed || false}
             onCollapse={setIsSidebarCollapsed}
             collapsible="button"
         >
