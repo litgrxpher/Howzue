@@ -16,23 +16,22 @@ export function JournalList({ entries }: JournalListProps) {
       {sortedEntries.map((entry) => {
         const moodInfo = MOODS.find(m => m.name === entry.mood);
         return (
-          <Card key={entry.id} className="shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
-            <CardHeader className="border-b">
-              <div className="flex justify-between items-start">
-                  <div>
-                    <CardTitle className="text-xl font-bold">
-                      {format(new Date(entry.date), 'EEEE, MMMM d, yyyy')}
-                    </CardTitle>
-                    <CardDescription>
-                      {format(new Date(entry.date), 'p')}
-                    </CardDescription>
-                  </div>
-                  {moodInfo && (
-                    <div className="flex flex-col items-center gap-1">
+          <Card key={entry.id} className="shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl overflow-hidden">
+            <CardHeader className="bg-gradient-to-br from-card to-muted/30 p-4 border-b">
+              <div className="flex justify-between items-center">
+                  <div className="flex items-center gap-4">
+                    {moodInfo && (
                         <span className="text-4xl">{moodInfo.emoji}</span>
-                        <span className="text-xs font-semibold uppercase text-muted-foreground">{moodInfo.name}</span>
+                    )}
+                    <div>
+                        <CardTitle className="text-xl font-bold capitalize">
+                        {moodInfo?.name}
+                        </CardTitle>
+                        <CardDescription>
+                            {format(new Date(entry.date), 'EEEE, MMMM d, yyyy')}
+                        </CardDescription>
                     </div>
-                  )}
+                  </div>
               </div>
             </CardHeader>
             <CardContent className="pt-6">
