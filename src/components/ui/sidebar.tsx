@@ -48,7 +48,7 @@ export const SidebarProvider = React.forwardRef<
   SidebarProviderProps
 >(({ isCollapsed = false, isMobile = false, ...props }, ref) => {
   const width = props.width ?? 256
-  const widthIcon = props.widthIcon ?? 48
+  const widthIcon = props.widthIcon ?? 64
 
   return (
     <SidebarContext.Provider
@@ -128,12 +128,14 @@ export const Sidebar = React.forwardRef<
         >
           {props.children}
           {collapsible && (
-            <SidebarCollapse
-              collapsible={collapsible}
-              side={side}
-              isCollapsed={isCollapsed}
-              onCollapse={handleCollapse}
-            />
+             <SidebarFooter>
+                <SidebarCollapse
+                    collapsible={collapsible}
+                    side={side}
+                    isCollapsed={isCollapsed}
+                    onCollapse={handleCollapse}
+                />
+            </SidebarFooter>
           )}
         </div>
     )
@@ -162,12 +164,10 @@ const SidebarCollapse = (props: {
   return (
     <Button
       variant="ghost"
-      size="icon"
       className={cn(
-        "absolute bottom-4 z-50 transition-all duration-300 ease-in-out",
-        "right-2",
+        "w-full transition-all duration-300 ease-in-out",
+        "justify-center",
         props.isCollapsed && "rotate-180",
-        props.collapsible === "button" && "sm:hidden"
       )}
       onClick={props.onCollapse}
     >
@@ -182,10 +182,11 @@ export const SidebarHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
+  const { isCollapsed } = useSidebar()
   return (
     <div
       ref={ref}
-      className={cn("flex h-14 items-center p-2", className)}
+      className={cn("flex h-14 items-center p-2", isCollapsed ? "justify-center" : "justify-start", className)}
       {...props}
     >
       {props.children}
@@ -287,7 +288,7 @@ export const SidebarMenuButton = React.forwardRef<
       variant={isActive ? "secondary" : "ghost"}
       className={cn(
         "h-full w-full justify-start transition-all duration-300 ease-in-out",
-        !isCollapsed && "gap-2"
+        isCollapsed ? "justify-center" : "gap-2"
       )}
       {...props}
     >

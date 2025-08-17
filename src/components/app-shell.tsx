@@ -13,12 +13,14 @@ import {
   SidebarMenuItem,
   SidebarMenuButton,
   SidebarTrigger,
-  SidebarProvider
+  SidebarProvider,
+  SidebarFooter,
 } from '@/components/ui/sidebar';
 import { Logo } from './logo';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
+import { useSidebar } from '@/components/ui/sidebar';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: Home },
@@ -28,8 +30,31 @@ const navItems = [
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
-export function AppShell({ children }: { children: React.ReactNode }) {
+function NavMenu() {
   const pathname = usePathname();
+  const { isCollapsed } = useSidebar();
+  
+  return (
+      <SidebarMenu>
+        {navItems.map((item) => (
+          <SidebarMenuItem key={item.href}>
+            <SidebarMenuButton
+              asChild
+              isActive={pathname === item.href}
+              tooltip={{ children: item.label }}
+            >
+              <Link href={item.href}>
+                <item.icon />
+                {!isCollapsed && <span>{item.label}</span>}
+              </Link>
+            </SidebarMenuButton>
+          </SidebarMenuItem>
+        ))}
+      </SidebarMenu>
+  )
+}
+
+export function AppShell({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
   const [isSidebarOpen, setSidebarOpen] = React.useState(!isMobile);
 
@@ -51,22 +76,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Logo />
       </SidebarHeader>
       <SidebarContent>
-        <SidebarMenu>
-          {navItems.map((item) => (
-            <SidebarMenuItem key={item.href}>
-              <SidebarMenuButton
-                asChild
-                isActive={pathname === item.href}
-                tooltip={{ children: item.label }}
-              >
-                <Link href={item.href}>
-                  <item.icon />
-                  <span>{item.label}</span>
-                </Link>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          ))}
-        </SidebarMenu>
+        <NavMenu />
       </SidebarContent>
     </>
   );
@@ -76,6 +86,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar
             isCollapsed={!isSidebarOpen}
             onCollapse={handleCollapse}
+            collapsible="button"
         >
             {sidebarContent}
         </Sidebar>
