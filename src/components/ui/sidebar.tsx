@@ -88,6 +88,8 @@ export const Sidebar = React.forwardRef<
     collapsible?: "icon" | "button"
     isCollapsed: boolean
     onCollapse?: (collapsed: boolean) => void
+    isOpen?: boolean
+    onOpenChange?: (open: boolean) => void
   }
 >(
   (
@@ -97,6 +99,8 @@ export const Sidebar = React.forwardRef<
       collapsible = "icon",
       onCollapse,
       isCollapsed,
+      isOpen,
+      onOpenChange,
       ...props
     },
     ref
@@ -108,7 +112,36 @@ export const Sidebar = React.forwardRef<
     },[isCollapsed, onCollapse])
 
     if (isMobile) {
-      return null;
+      if (!isOpen) return null;
+
+      return (
+        <>
+           <div
+            ref={ref}
+            className={cn(
+              "fixed inset-y-0 z-40 h-full flex-col border-border bg-sidebar transition-all duration-300 ease-in-out sm:flex animate-in slide-in-from-left-full",
+              side === "left" && "left-0 border-r",
+              side === "right" && "right-0 border-l",
+              "w-[var(--sidebar-width)]",
+              className
+            )}
+            data-collapsed={false}
+            {...props}
+          >
+            <div className="absolute right-2 top-2">
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={() => onOpenChange?.(false)}
+              >
+                <X />
+              </Button>
+            </div>
+            {props.children}
+          </div>
+          <SidebarOverlay onCollapse={() => onOpenChange?.(false)} />
+        </>
+      )
     }
     
     return (
@@ -154,7 +187,7 @@ Sidebar.displayName = "Sidebar"
 const SidebarOverlay = (props: { onCollapse: () => void }) => {
   return (
     <div
-      className="fixed inset-0 z-30 bg-black/50 sm:hidden"
+      className="fixed inset-0 z-30 bg-black/50 sm:hidden animate-in fade-in-50"
       onClick={props.onCollapse}
     />
   )
@@ -322,44 +355,23 @@ SidebarMenuButton.displayName = "SidebarMenuButton"
 
 export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
-    const [isOpen, setIsOpen] = React.useState(false)
-    const isMobile = useIsMobile();
+    const { isMobile } = useSidebar();
+    const { onClick } = props;
     
-    const sidebarContent = (
-      <>
-        <div className="absolute right-2 top-2">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsOpen(false)}
-          >
-            <X />
-          </Button>
-        </div>
-        {props.children}
-      </>
-    );
-
     if (!isMobile) {
       return null
     }
 
     return (
-      <>
-        <Button
-          ref={ref}
-          {...props}
-          onClick={() => setIsOpen(true)}
-        />
-        {isOpen ? (
-          <SidebarProvider isCollapsed={!isOpen} isMobile={isMobile}>
-            <div className="fixed inset-y-0 left-0 z-40 w-[var(--sidebar-width)] animate-in slide-in-from-left-full duration-300 sm:hidden bg-sidebar border-r">
-                {sidebarContent}
-            </div>
-            <SidebarOverlay onCollapse={() => setIsOpen(false)} />
-          </SidebarProvider>
-        ) : null}
-      </>
+      <Button
+        ref={ref}
+        {...props}
+        onClick={(e) => {
+          const { onOpenChange, isOpen } = (e.currentTarget as any).closest("[data-sidebar-root]")?.context ?? {};
+          onOpenChange?.(!isOpen);
+          onClick?.(e);
+        }}
+      />
     )
   }
 )

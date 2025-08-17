@@ -4,7 +4,7 @@
 import React, { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Home, Book, BarChart2, Settings, Menu } from 'lucide-react';
+import { Home, Book, BarChart2, Settings, Menu, Bot } from 'lucide-react';
 import {
   Sidebar,
   SidebarHeader,
@@ -14,7 +14,6 @@ import {
   SidebarMenuButton,
   SidebarTrigger,
   SidebarProvider,
-  SidebarFooter,
 } from '@/components/ui/sidebar';
 import { Logo } from './logo';
 import { useIsMobile } from '@/hooks/use-mobile';
@@ -27,6 +26,7 @@ const navItems = [
   { href: '/', label: 'Dashboard', icon: Home },
   { href: '/journal', label: 'Journal', icon: Book },
   { href: '/insights', label: 'Insights', icon: BarChart2 },
+  { href: '/companion', label: 'AI Companion', icon: Bot },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -58,6 +58,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const { user, isAuthLoaded } = useAuth();
   const router = useRouter();
   const isMobile = useIsMobile();
+  const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
   const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(isMobile);
   
   useEffect(() => {
@@ -93,6 +94,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <SidebarProvider isCollapsed={isSidebarCollapsed} isMobile={isMobile}>
         <Sidebar
+            isOpen={isSidebarOpen}
+            onOpenChange={setIsSidebarOpen}
             isCollapsed={isSidebarCollapsed}
             onCollapse={setIsSidebarCollapsed}
             collapsible="button"
@@ -111,7 +114,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             <SidebarTrigger asChild>
                 <Button variant="ghost" size="icon">
                     <Menu />
-                    {sidebarContent}
                 </Button>
             </SidebarTrigger>
             <div className="ml-4">
