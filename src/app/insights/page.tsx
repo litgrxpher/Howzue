@@ -1,12 +1,23 @@
 
 'use client';
 
-import { AiSummary } from '@/components/ai-summary';
-import { MoodChart } from '@/components/mood-chart';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useAppStore } from '@/hooks/use-app-store';
 import { BrainCircuit, LineChart, Lightbulb } from 'lucide-react';
 import React from 'react';
+import dynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/skeleton';
+
+const MoodChart = dynamic(() => import('@/components/mood-chart').then(mod => mod.MoodChart), {
+  ssr: false,
+  loading: () => <Skeleton className="h-80 w-full" />,
+});
+
+const AiSummary = dynamic(() => import('@/components/ai-summary').then(mod => mod.AiSummary), {
+  ssr: false,
+  loading: () => <Skeleton className="h-24 w-full" />,
+});
+
 
 export default function InsightsPage() {
   const { entries } = useAppStore();

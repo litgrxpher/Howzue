@@ -88,3 +88,6 @@ export function MoodChart({ entries }: MoodChartProps) {
     </div>
   );
 }
+
+// Export as default to be compatible with next/dynamic
+export default MoodChart;
