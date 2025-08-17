@@ -76,7 +76,6 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Sidebar
             isCollapsed={!isSidebarOpen}
             onCollapse={handleCollapse}
-            isMobile={isMobile}
         >
             {sidebarContent}
         </Sidebar>

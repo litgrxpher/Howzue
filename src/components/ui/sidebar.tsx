@@ -104,7 +104,7 @@ export const Sidebar = React.forwardRef<
     const { isMobile } = useSidebar();
     
     const handleCollapse = React.useCallback(() => {
-        onCollapse?.(!isCollapsed);
+        onCollapse?.(isCollapsed);
     },[isCollapsed, onCollapse])
 
     if (isMobile) {
