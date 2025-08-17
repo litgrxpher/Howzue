@@ -83,7 +83,7 @@ export default function DashboardPage() {
             <TrendingUp className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-5xl font-bold">
+            <div className="text-4xl font-bold">
               {averageMoodEmoji}
             </div>
             <p className="text-xs text-muted-foreground">
