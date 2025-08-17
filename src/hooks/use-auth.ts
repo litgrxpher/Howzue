@@ -1,7 +1,7 @@
 
 'use client';
 
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
 
 interface User {
   id: string;
@@ -52,7 +52,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     setUser(null);
     localStorage.removeItem('howzue-user');
   };
-
+  
   const authState: AuthState = { user, isAuthLoaded, login, signup, logout };
 
   return (
