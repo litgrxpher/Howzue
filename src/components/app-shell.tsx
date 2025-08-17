@@ -56,19 +56,11 @@ function NavMenu() {
 
 export function AppShell({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
-  const [isSidebarOpen, setSidebarOpen] = React.useState(!isMobile);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(isMobile);
 
   React.useEffect(() => {
-    if (isMobile) {
-      setSidebarOpen(false);
-    } else {
-      setSidebarOpen(true);
-    }
+    setIsSidebarCollapsed(isMobile);
   }, [isMobile]);
-
-  const handleCollapse = (collapsed: boolean) => {
-    setSidebarOpen(collapsed);
-  };
   
   const sidebarContent = (
     <>
@@ -82,10 +74,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   );
 
   return (
-    <SidebarProvider isCollapsed={!isSidebarOpen} isMobile={isMobile}>
+    <SidebarProvider isCollapsed={isSidebarCollapsed} isMobile={isMobile}>
         <Sidebar
-            isCollapsed={!isSidebarOpen}
-            onCollapse={handleCollapse}
+            isCollapsed={isSidebarCollapsed}
+            onCollapse={setIsSidebarCollapsed}
             collapsible="button"
         >
             {sidebarContent}
@@ -93,7 +85,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <div
             className={cn(
             'transition-all duration-300 ease-in-out',
-            isSidebarOpen && !isMobile
+            !isSidebarCollapsed && !isMobile
                 ? 'md:pl-[var(--sidebar-width)]'
                 : 'md:pl-[var(--sidebar-width-icon)]'
             )}
