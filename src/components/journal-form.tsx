@@ -20,7 +20,6 @@ import { useAppStore } from '@/hooks/use-app-store';
 import type { Mood } from '@/lib/types';
 import { MOODS } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
-import { AiPrompts } from './ai-prompts';
 
 const journalFormSchema = z.object({
   mood: z.enum(['great', 'good', 'okay', 'bad', 'awful'], {
@@ -39,7 +38,7 @@ interface JournalFormProps {
 }
 
 export function JournalForm({ initialMood, onSave }: JournalFormProps) {
-  const { addEntry, entries } = useAppStore();
+  const { addEntry } = useAppStore();
   const { toast } = useToast();
 
   const form = useForm<JournalFormValues>({
@@ -109,12 +108,6 @@ export function JournalForm({ initialMood, onSave }: JournalFormProps) {
                 />
               </FormControl>
                <FormMessage />
-               <AiPrompts 
-                entries={entries}
-                onPromptSelect={(prompt) => {
-                  form.setValue('text', prompt);
-                }}
-              />
             </FormItem>
           )}
         />
