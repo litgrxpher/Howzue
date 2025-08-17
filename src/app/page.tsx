@@ -41,10 +41,10 @@ export default function DashboardPage() {
   return (
     <div className="flex flex-col gap-8">
       <div className="animate-fade-in-up">
-        <div className="flex justify-between items-start">
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight font-headline">Welcome back!</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-4xl font-bold tracking-tight font-headline">Welcome back!</h1>
+            <p className="text-muted-foreground text-lg">
               {isToday ? "Here's your summary for today" : `Viewing data for ${format(selectedDate, 'EEEE, MMMM d')}`}
             </p>
           </div>
@@ -53,7 +53,7 @@ export default function DashboardPage() {
               <Button
                 variant={'outline'}
                 className={cn(
-                  'w-[280px] justify-start text-left font-normal',
+                  'w-full sm:w-[280px] justify-start text-left font-normal shadow-sm',
                   !selectedDate && 'text-muted-foreground'
                 )}
               >
@@ -76,35 +76,35 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card className="animate-fade-in-up transition-transform duration-300 ease-in-out hover:scale-105" style={{ animationDelay: '0.1s' }}>
+      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        <Card className="animate-fade-in-up shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl" style={{ animationDelay: '0.1s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
-            <TrendingUp className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">Weekly Average</CardTitle>
+            <TrendingUp className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              <span className="text-3xl">{averageMoodEmoji}</span>
+            <div className="text-5xl font-bold">
+              {averageMoodEmoji}
             </div>
             <p className="text-xs text-muted-foreground">
               {weeklyAverageMood ? `~${weeklyAverageMood.toFixed(1)}/5 mood level` : 'No entries this week'}
             </p>
           </CardContent>
         </Card>
-        <Card className="animate-fade-in-up transition-transform duration-300 ease-in-out hover:scale-105" style={{ animationDelay: '0.2s' }}>
+        <Card className="animate-fade-in-up shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl" style={{ animationDelay: '0.2s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Journaling Streak</CardTitle>
-            <Zap className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">Journaling Streak</CardTitle>
+            <Zap className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{streak} days</div>
-            <p className="text-xs text-muted-foreground">Keep it up!</p>
+            <p className="text-xs text-muted-foreground">Keep the momentum going!</p>
           </CardContent>
         </Card>
-        <Card className="md:col-span-2 lg:col-span-1 animate-fade-in-up transition-transform duration-300 ease-in-out hover:scale-105" style={{ animationDelay: '0.3s' }}>
+        <Card className="md:col-span-2 lg:col-span-1 animate-fade-in-up shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl" style={{ animationDelay: '0.3s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Entries</CardTitle>
-            <CalendarDays className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">Total Entries</CardTitle>
+            <CalendarDays className="h-5 w-5 text-primary" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{entries.length}</div>
@@ -113,11 +113,11 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <Card className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
+      <Card className="animate-fade-in-up shadow-lg" style={{ animationDelay: '0.4s' }}>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Smile size={24} />
-            {isToday ? "How are you feeling today?" : `On ${format(selectedDate, 'MMMM d')}, you felt...`}
+          <CardTitle className="flex items-center gap-3">
+            <Smile size={28} className="text-primary"/>
+            <span className="text-2xl">{isToday ? "How are you feeling today?" : `On ${format(selectedDate, 'MMMM d')}, you felt...`}</span>
           </CardTitle>
           {selectedDateEntry && isToday && (
              <CardDescription>
@@ -129,14 +129,14 @@ export default function DashboardPage() {
           {isToday ? (
             <MoodSelector />
           ) : (
-            <div className="flex items-center justify-center p-8 bg-muted/50 rounded-lg text-center">
+            <div className="flex items-center justify-center p-8 bg-muted/50 rounded-lg text-center h-48">
               {selectedDateEntry ? (
                 <div>
-                  <span className="text-6xl">{MOODS.find(m => m.name === selectedDateEntry.mood)?.emoji}</span>
-                  <p className="text-xl font-semibold capitalize mt-2">{selectedDateEntry.mood}</p>
+                  <span className="text-7xl">{MOODS.find(m => m.name === selectedDateEntry.mood)?.emoji}</span>
+                  <p className="text-2xl font-semibold capitalize mt-2">{selectedDateEntry.mood}</p>
                 </div>
               ) : (
-                <p className="text-muted-foreground">No entry logged on this day.</p>
+                <p className="text-muted-foreground text-lg">No entry logged on this day.</p>
               )}
             </div>
           )}

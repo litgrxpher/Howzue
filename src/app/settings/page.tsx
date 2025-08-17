@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { Theme } from '@/lib/types';
-import { Info } from 'lucide-react';
+import { Info, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -52,24 +52,24 @@ export default function SettingsPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">Settings</h1>
-        <p className="text-muted-foreground">Manage your app preferences.</p>
+        <h1 className="text-4xl font-bold tracking-tight font-headline">Settings</h1>
+        <p className="text-muted-foreground text-lg">Manage your app preferences.</p>
       </div>
-      <Card>
+      <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle>Preferences</CardTitle>
+          <CardTitle className="text-2xl">Preferences</CardTitle>
           <CardDescription>Customize your Howzue experience.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-6">
+        <CardContent className="space-y-6 pt-4">
           <div className="flex items-center justify-between space-x-2">
             <Label htmlFor="theme" className="flex flex-col space-y-1">
-              <span>Theme</span>
+              <span className="text-base">Theme</span>
               <span className="font-normal leading-snug text-muted-foreground">
                 Choose how Howzue looks on your device.
               </span>
             </Label>
             <Select onValueChange={handleThemeChange} defaultValue={settings.theme}>
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-[180px] shadow-sm">
                 <SelectValue placeholder="Select theme" />
               </SelectTrigger>
               <SelectContent>
@@ -82,25 +82,29 @@ export default function SettingsPage() {
         </CardContent>
       </Card>
 
-      <Card>
+      <Card className="shadow-lg border-destructive/50">
         <CardHeader>
-            <CardTitle>Data & Privacy</CardTitle>
+            <CardTitle className="text-2xl">Data & Privacy</CardTitle>
+            <CardDescription>Manage your personal data.</CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-            <div className="flex items-start gap-4 p-4 bg-accent/50 rounded-lg">
-                <Info className="w-5 h-5 mt-1 text-accent-foreground" />
+        <CardContent className="space-y-4 pt-4">
+            <div className="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800/50">
+                <Info className="w-5 h-5 mt-1 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                 <div>
-                    <h3 className="font-semibold text-accent-foreground">Your Data is Yours</h3>
-                    <p className="text-sm text-muted-foreground">
+                    <h3 className="font-semibold text-blue-800 dark:text-blue-300">Your Data is Yours</h3>
+                    <p className="text-sm text-blue-700 dark:text-blue-400/80">
                     All your journal entries and mood data are stored locally on your device's browser. We do not collect or store your personal data on our servers. When you use AI features, anonymized text may be sent to our AI provider to generate insights.
                     </p>
                 </div>
             </div>
         </CardContent>
-        <CardFooter>
+        <CardFooter className="bg-muted/50 py-4 px-6 rounded-b-lg">
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive">Delete All Data</Button>
+              <Button variant="destructive" className="shadow-md">
+                <Trash2 className="mr-2" />
+                Delete All Data
+              </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>

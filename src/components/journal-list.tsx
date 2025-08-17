@@ -12,26 +12,31 @@ export function JournalList({ entries }: JournalListProps) {
   const sortedEntries = [...entries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   
   return (
-    <div className="space-y-4">
+    <div className="space-y-6">
       {sortedEntries.map((entry) => {
         const moodInfo = MOODS.find(m => m.name === entry.mood);
         return (
-          <Card key={entry.id}>
-            <CardHeader>
+          <Card key={entry.id} className="shadow-md transition-all duration-300 hover:shadow-xl">
+            <CardHeader className="border-b">
               <div className="flex justify-between items-start">
                   <div>
-                    <CardTitle className="text-lg">
+                    <CardTitle className="text-xl font-bold">
                       {format(new Date(entry.date), 'EEEE, MMMM d, yyyy')}
                     </CardTitle>
                     <CardDescription>
                       {format(new Date(entry.date), 'p')}
                     </CardDescription>
                   </div>
-                  {moodInfo && <span className="text-3xl">{moodInfo.emoji}</span>}
+                  {moodInfo && (
+                    <div className="flex flex-col items-center gap-1">
+                        <span className="text-4xl">{moodInfo.emoji}</span>
+                        <span className="text-xs font-semibold uppercase text-muted-foreground">{moodInfo.name}</span>
+                    </div>
+                  )}
               </div>
             </CardHeader>
-            <CardContent>
-              <p className="text-sm text-foreground/80 whitespace-pre-wrap">{entry.text}</p>
+            <CardContent className="pt-6">
+              <p className="text-base text-foreground/80 whitespace-pre-wrap leading-relaxed">{entry.text}</p>
             </CardContent>
           </Card>
         );

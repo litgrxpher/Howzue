@@ -20,6 +20,7 @@ import { useAppStore } from '@/hooks/use-app-store';
 import type { Mood } from '@/lib/types';
 import { MOODS } from '@/lib/constants';
 import { useToast } from '@/hooks/use-toast';
+import { AiPrompts } from './ai-prompts';
 
 const journalFormSchema = z.object({
   mood: z.enum(['great', 'good', 'okay', 'bad', 'awful'], {
@@ -38,7 +39,7 @@ interface JournalFormProps {
 }
 
 export function JournalForm({ initialMood, onSave }: JournalFormProps) {
-  const { addEntry } = useAppStore();
+  const { addEntry, entries } = useAppStore();
   const { toast } = useToast();
 
   const form = useForm<JournalFormValues>({
@@ -60,13 +61,13 @@ export function JournalForm({ initialMood, onSave }: JournalFormProps) {
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
           name="mood"
           render={({ field }) => (
-            <FormItem className="space-y-3">
-              <FormLabel>How are you feeling?</FormLabel>
+            <FormItem className="space-y-4">
+              <FormLabel className="text-base font-semibold">How are you feeling?</FormLabel>
               <FormControl>
                 <RadioGroup
                   onValueChange={field.onChange}
@@ -79,12 +80,12 @@ export function JournalForm({ initialMood, onSave }: JournalFormProps) {
                         <RadioGroupItem value={name} className="sr-only" />
                       </FormControl>
                       <FormLabel
-                        className={`flex flex-col items-center justify-center p-2 rounded-md border-2 border-muted bg-popover hover:bg-accent hover:text-accent-foreground cursor-pointer ${
-                          field.value === name ? 'border-primary' : ''
+                        className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 border-muted bg-popover hover:bg-accent/20 hover:text-accent-foreground cursor-pointer transition-all duration-200 w-20 h-20 ${
+                          field.value === name ? 'border-primary scale-110 shadow-lg' : ''
                         }`}
                       >
-                        <span className="text-2xl">{emoji}</span>
-                        <span className="text-xs capitalize">{name}</span>
+                        <span className="text-3xl">{emoji}</span>
+                        <span className="text-sm capitalize mt-1">{name}</span>
                       </FormLabel>
                     </FormItem>
                   ))}
@@ -99,19 +100,25 @@ export function JournalForm({ initialMood, onSave }: JournalFormProps) {
           name="text"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>What's on your mind?</FormLabel>
+              <FormLabel className="text-base font-semibold">What's on your mind?</FormLabel>
               <FormControl>
                 <Textarea
                   placeholder="Tell us about your day, your thoughts, your feelings..."
-                  className="resize-y min-h-[120px]"
+                  className="resize-y min-h-[140px] text-base"
                   {...field}
                 />
               </FormControl>
-              <FormMessage />
+               <FormMessage />
+               <AiPrompts 
+                entries={entries}
+                onPromptSelect={(prompt) => {
+                  form.setValue('text', prompt);
+                }}
+              />
             </FormItem>
           )}
         />
-        <Button type="submit">Save your thought!</Button>
+        <Button type="submit" size="lg" className="w-full shadow-md">Save Your Thought</Button>
       </form>
     </Form>
   );

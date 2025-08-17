@@ -24,19 +24,19 @@ export default function JournalPage() {
     <div className="flex flex-col gap-8 h-full">
       <div className="flex justify-between items-start">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight font-headline">My Journal</h1>
-          <p className="text-muted-foreground">Your personal space to reflect and grow.</p>
+          <h1 className="text-4xl font-bold tracking-tight font-headline">My Journal</h1>
+          <p className="text-muted-foreground text-lg">Your personal space to reflect and grow.</p>
         </div>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
-            <Button>
-              <PenSquare className="mr-2 h-4 w-4" />
+            <Button size="lg" className="shadow-md">
+              <PenSquare className="mr-2 h-5 w-5" />
               New Entry
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] md:max-w-lg">
+          <DialogContent className="sm:max-w-[425px] md:max-w-xl">
             <DialogHeader>
-              <DialogTitle>New Journal Entry</DialogTitle>
+              <DialogTitle className="text-2xl">New Journal Entry</DialogTitle>
               <DialogDescription>
                 How are you feeling today? Write down your thoughts.
               </DialogDescription>
@@ -46,26 +46,26 @@ export default function JournalPage() {
         </Dialog>
       </div>
       {entries.length > 0 ? (
-        <ScrollArea className="flex-grow">
+        <ScrollArea className="flex-grow pr-4 -mr-4">
           <JournalList entries={entries} />
         </ScrollArea>
       ) : (
-        <div className="flex-grow flex flex-col items-center justify-center gap-4 text-center bg-card p-8 rounded-lg border-2 border-dashed">
-          <Book className="w-16 h-16 text-muted-foreground" />
-          <h2 className="text-xl font-semibold">Your journal is empty</h2>
+        <div className="flex-grow flex flex-col items-center justify-center gap-4 text-center bg-gradient-to-br from-card to-muted/50 p-8 rounded-lg border-2 border-dashed">
+          <Book className="w-20 h-20 text-primary" />
+          <h2 className="text-2xl font-semibold">Your journal is empty</h2>
           <p className="text-muted-foreground max-w-sm">
             Start by writing a new entry. It's a great way to understand your feelings better.
           </p>
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
-              <Button>
-                <PenSquare className="mr-2 h-4 w-4" />
-                Write First Entry
+              <Button size="lg" className="mt-4 shadow-md">
+                <PenSquare className="mr-2 h-5 w-5" />
+                Write Your First Entry
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] md:max-w-lg">
+            <DialogContent className="sm:max-w-[425px] md:max-w-xl">
               <DialogHeader>
-                <DialogTitle>New Journal Entry</DialogTitle>
+                <DialogTitle className="text-2xl">New Journal Entry</DialogTitle>
                 <DialogDescription>
                   How are you feeling today? Write down your thoughts.
                 </DialogDescription>

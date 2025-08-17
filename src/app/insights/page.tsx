@@ -14,15 +14,15 @@ export default function InsightsPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">Insights</h1>
-        <p className="text-muted-foreground">Discover patterns in your emotional landscape.</p>
+        <h1 className="text-4xl font-bold tracking-tight font-headline">Insights</h1>
+        <p className="text-muted-foreground text-lg">Discover patterns in your emotional landscape.</p>
       </div>
 
-      <Card>
+      <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <LineChart />
-            Mood Trends
+          <CardTitle className="flex items-center gap-3">
+            <LineChart className="text-primary" />
+            <span className="text-2xl">Mood Trends</span>
           </CardTitle>
           <CardDescription>
             A visual representation of your mood fluctuations over time.
@@ -32,22 +32,22 @@ export default function InsightsPage() {
           {entries.length > 5 ? (
             <MoodChart entries={entries} />
           ) : (
-            <div className="h-80 flex flex-col items-center justify-center gap-4 text-center bg-muted/50 p-8 rounded-lg">
-              <Lightbulb className="w-16 h-16 text-muted-foreground" />
-              <h2 className="text-xl font-semibold">Not enough data yet</h2>
+            <div className="h-80 flex flex-col items-center justify-center gap-4 text-center bg-gradient-to-br from-card to-muted/50 p-8 rounded-lg border-2 border-dashed">
+              <Lightbulb className="w-16 h-16 text-primary" />
+              <h2 className="text-2xl font-semibold text-foreground">Not enough data yet</h2>
               <p className="text-muted-foreground max-w-sm">
-                Keep logging your mood for at least 5 days to see your trends.
+                Keep logging your mood for at least 5 days to see your trends. Your emotional map will appear here.
               </p>
             </div>
           )}
         </CardContent>
       </Card>
       
-      <Card>
+      <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <BrainCircuit />
-            AI-Powered Summary
+          <CardTitle className="flex items-center gap-3">
+            <BrainCircuit className="text-primary" />
+            <span className="text-2xl">AI-Powered Summary</span>
           </CardTitle>
           <CardDescription>
             An analysis of your recent entries to highlight mood patterns and potential triggers.
