@@ -1,7 +1,7 @@
 
 'use client';
 
-import { AppContext, useApp } from '@/hooks/use-app-store';
+import { AppContext, useApp, useAppStore } from '@/hooks/use-app-store';
 import React, { useEffect } from 'react';
 
 const AppProvider = ({ children }: { children: React.ReactNode }) => {
@@ -10,7 +10,7 @@ const AppProvider = ({ children }: { children: React.ReactNode }) => {
 }
 
 const ThemeManager = ({ children }: { children: React.ReactNode }) => {
-  const { settings } = useApp();
+  const { settings } = useAppStore();
 
   useEffect(() => {
     const root = window.document.documentElement;
