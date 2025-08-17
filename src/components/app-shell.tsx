@@ -4,7 +4,7 @@
 import React from 'react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
-import { Home, Book, BarChart2, Settings, Menu, Bot } from 'lucide-react';
+import { Home, Book, BarChart2, Settings, Menu } from 'lucide-react';
 import {
   Sidebar,
   SidebarHeader,
@@ -26,7 +26,6 @@ const navItems = [
   { href: '/', label: 'Dashboard', icon: Home },
   { href: '/journal', label: 'Journal', icon: Book },
   { href: '/insights', label: 'Insights', icon: BarChart2 },
-  { href: '/companion', label: 'Companion', icon: Bot },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
