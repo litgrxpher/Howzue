@@ -1,20 +1,31 @@
+
+'use client';
+
 import type { Metadata } from 'next';
+import { usePathname } from 'next/navigation';
 import { AppShell } from '@/components/app-shell';
+import { AuthProvider } from '@/hooks/use-auth';
 import { Providers } from '@/components/providers';
 import { Toaster } from '@/components/ui/toaster';
 import { cn } from '@/lib/utils';
 import './globals.css';
 
-export const metadata: Metadata = {
-  title: 'Howzue - Your Mood Companion',
-  description: 'Track your mood, journal your thoughts, and gain insights with Howzue.',
-};
+// Metadata cannot be exported from a client component.
+// We can either move this to a server component or handle it dynamically.
+// For now, we will keep it simple.
+// export const metadata: Metadata = {
+//   title: 'Howzue - Your Mood Companion',
+//   description: 'Track your mood, journal your thoughts, and gain insights with Howzue.',
+// };
 
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const pathname = usePathname();
+  const isLoginPage = pathname === '/login';
+
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
@@ -26,10 +37,16 @@ export default function RootLayout({
         />
       </head>
       <body className={cn('font-body antialiased')}>
-        <Providers>
-          <AppShell>{children}</AppShell>
-          <Toaster />
-        </Providers>
+        <AuthProvider>
+          <Providers>
+            {isLoginPage ? (
+              children
+            ) : (
+              <AppShell>{children}</AppShell>
+            )}
+            <Toaster />
+          </Providers>
+        </AuthProvider>
       </body>
     </html>
   );

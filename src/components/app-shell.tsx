@@ -1,8 +1,8 @@
 
 'use client';
 
-import React from 'react';
-import { usePathname } from 'next/navigation';
+import React, { useEffect } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { Home, Book, BarChart2, Settings, Menu } from 'lucide-react';
 import {
@@ -21,6 +21,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { Button } from './ui/button';
 import { cn } from '@/lib/utils';
 import { useSidebar } from '@/components/ui/sidebar';
+import { useAuth } from '@/hooks/use-auth';
 
 const navItems = [
   { href: '/', label: 'Dashboard', icon: Home },
@@ -54,8 +55,17 @@ function NavMenu() {
 }
 
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const { user, isAuthLoaded } = useAuth();
+  const router = useRouter();
   const isMobile = useIsMobile();
   const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(isMobile);
+  
+  useEffect(() => {
+    if (isAuthLoaded && !user) {
+      router.push('/login');
+    }
+  }, [user, isAuthLoaded, router]);
+
 
   React.useEffect(() => {
     setIsSidebarCollapsed(isMobile);
@@ -71,6 +81,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </SidebarContent>
     </>
   );
+
+  if (!user) {
+    return (
+        <div className="flex h-screen w-full items-center justify-center">
+            <div className="text-2xl">Loading...</div>
+        </div>
+    )
+  }
 
   return (
     <SidebarProvider isCollapsed={isSidebarCollapsed} isMobile={isMobile}>

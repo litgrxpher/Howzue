@@ -3,6 +3,7 @@
 
 import { AppContext, useApp, useAppStore } from '@/hooks/use-app-store';
 import React, { useEffect } from 'react';
+import { AuthProvider, useAuth } from '@/hooks/use-auth';
 
 const AppProvider = ({ children }: { children: React.ReactNode }) => {
   const value = useApp();

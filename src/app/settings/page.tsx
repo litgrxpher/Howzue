@@ -19,7 +19,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import type { Theme } from '@/lib/types';
-import { Info, Trash2 } from 'lucide-react';
+import { Info, LogOut, Trash2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import {
   AlertDialog,
@@ -32,9 +32,13 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { useAuth } from '@/hooks/use-auth';
+import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
   const { settings, updateSettings, deleteAllData } = useAppStore();
+  const { logout } = useAuth();
+  const router = useRouter();
   const { toast } = useToast();
 
   const handleThemeChange = (theme: Theme) => {
@@ -48,6 +52,15 @@ export default function SettingsPage() {
       description: 'All your journal entries have been deleted.',
     });
   };
+
+  const handleLogout = () => {
+    logout();
+    router.push('/login');
+    toast({
+        title: 'Logged Out',
+        description: 'You have been successfully logged out.',
+    });
+  }
 
   return (
     <div className="flex flex-col gap-8">
@@ -80,6 +93,12 @@ export default function SettingsPage() {
             </Select>
           </div>
         </CardContent>
+        <CardFooter className="bg-muted/50 py-4 px-6 rounded-b-lg flex justify-start">
+            <Button onClick={handleLogout} className="shadow-md">
+                <LogOut className="mr-2" />
+                Logout
+            </Button>
+        </CardFooter>
       </Card>
 
       <Card className="shadow-lg border-destructive/50">
