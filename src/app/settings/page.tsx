@@ -93,18 +93,12 @@ export default function SettingsPage() {
             </Select>
           </div>
         </CardContent>
-        <CardFooter className="bg-muted/50 py-4 px-6 rounded-b-lg flex justify-start">
-            <Button onClick={handleLogout} className="shadow-md">
-                <LogOut className="mr-2" />
-                Logout
-            </Button>
-        </CardFooter>
       </Card>
 
       <Card className="shadow-lg border-destructive/50">
         <CardHeader>
-            <CardTitle className="text-2xl">Data & Privacy</CardTitle>
-            <CardDescription>Manage your personal data.</CardDescription>
+            <CardTitle className="text-2xl">Account & Data</CardTitle>
+            <CardDescription>Manage your session and personal data.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 pt-4">
             <div className="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800/50">
@@ -117,7 +111,11 @@ export default function SettingsPage() {
                 </div>
             </div>
         </CardContent>
-        <CardFooter className="bg-muted/50 py-4 px-6 rounded-b-lg">
+        <CardFooter className="bg-muted/50 py-4 px-6 rounded-b-lg flex justify-start gap-2">
+          <Button onClick={handleLogout} variant="outline" className="shadow-md">
+              <LogOut className="mr-2" />
+              Logout
+          </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
               <Button variant="destructive" className="shadow-md">
