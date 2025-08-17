@@ -16,7 +16,7 @@ export function JournalList({ entries }: JournalListProps) {
       {sortedEntries.map((entry) => {
         const moodInfo = MOODS.find(m => m.name === entry.mood);
         return (
-          <Card key={entry.id} className="shadow-md transition-all duration-300 hover:shadow-xl">
+          <Card key={entry.id} className="shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
             <CardHeader className="border-b">
               <div className="flex justify-between items-start">
                   <div>
