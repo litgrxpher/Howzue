@@ -3,7 +3,6 @@
 import React from 'react';
 import { format } from 'date-fns';
 import { Smile, Zap, TrendingUp, CalendarDays } from 'lucide-react';
-import Image from 'next/image';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { MoodSelector } from '@/components/mood-selector';
@@ -19,7 +18,7 @@ export default function DashboardPage() {
   );
 
   const averageMoodEmoji = React.useMemo(() => {
-    if (!weeklyAverageMood) return 'https://twemoji.maxcdn.com/v/14.0.2/svg/1f914.svg';
+    if (!weeklyAverageMood) return '🤔';
     const closestMood = MOODS.reduce((prev, curr) =>
       Math.abs(curr.value - weeklyAverageMood) < Math.abs(prev.value - weeklyAverageMood)
         ? curr
@@ -43,7 +42,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              <Image src={averageMoodEmoji} alt="average mood" width={32} height={32} />
+              <span className="text-3xl">{averageMoodEmoji}</span>
             </div>
             <p className="text-xs text-muted-foreground">
               {weeklyAverageMood ? `~${weeklyAverageMood.toFixed(1)}/5 mood level` : 'No entries this week'}

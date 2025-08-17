@@ -5,7 +5,6 @@ import { format } from 'date-fns';
 import type { JournalEntry } from '@/lib/types';
 import { MOODS } from '@/lib/constants';
 import { Card } from './ui/card';
-import Image from 'next/image';
 
 interface MoodChartProps {
   entries: JournalEntry[];
@@ -16,8 +15,8 @@ const YAxisTick = (props: any) => {
   const mood = MOODS.find(m => m.value === payload.value);
   if (mood) {
     return (
-      <g transform={`translate(${x - 20},${y})`}>
-        <image href={mood.emoji} x={0} y={-10} height="20px" width="20px" />
+      <g transform={`translate(${x - 12},${y + 4})`}>
+        <text fontSize="1.5em">{mood.emoji}</text>
       </g>
     );
   }
@@ -45,7 +44,7 @@ export function MoodChart({ entries }: MoodChartProps) {
       return (
         <Card className="p-2 flex items-center gap-2">
             <p className="text-sm font-bold">{label}:</p>
-            {mood && <Image src={mood.emoji} alt={mood.name} width={20} height={20} />}
+            {mood && <span className="text-xl">{mood.emoji}</span>}
             <p className="text-sm">{mood?.name}</p>
         </Card>
       );

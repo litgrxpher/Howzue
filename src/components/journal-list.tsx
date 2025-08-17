@@ -3,7 +3,6 @@ import { format } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import type { JournalEntry } from '@/lib/types';
 import { MOODS } from '@/lib/constants';
-import Image from 'next/image';
 
 interface JournalListProps {
   entries: JournalEntry[];
@@ -28,7 +27,7 @@ export function JournalList({ entries }: JournalListProps) {
                       {format(new Date(entry.date), 'p')}
                     </CardDescription>
                   </div>
-                  {moodInfo && <Image src={moodInfo.emoji} alt={moodInfo.name} width={32} height={32} />}
+                  {moodInfo && <span className="text-3xl">{moodInfo.emoji}</span>}
               </div>
             </CardHeader>
             <CardContent>
