@@ -2,18 +2,27 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import {
+  getAuth,
+  onAuthStateChanged,
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+  signOut,
+  type User as FirebaseUser,
+} from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 interface User {
   id: string;
-  email: string;
+  email: string | null;
 }
 
 interface AuthState {
   user: User | null;
   isAuthLoaded: boolean;
-  login: (email: string) => void;
-  signup: (email: string) => void;
-  logout: () => void;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string) => Promise<void>;
+  logout: () => Promise<void>;
 }
 
 export const AuthContext = createContext<AuthState | undefined>(undefined);
@@ -23,37 +32,40 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthLoaded, setIsAuthLoaded] = useState(false);
 
   useEffect(() => {
-    try {
-      const storedUser = localStorage.getItem('howzue-user');
-      if (storedUser) {
-        setUser(JSON.parse(storedUser));
+    const unsubscribe = onAuthStateChanged(auth, (firebaseUser: FirebaseUser | null) => {
+      if (firebaseUser) {
+        setUser({
+          id: firebaseUser.uid,
+          email: firebaseUser.email,
+        });
+      } else {
+        setUser(null);
       }
-    } catch (error) {
-      console.error('Failed to load user from localStorage', error);
-    }
-    setIsAuthLoaded(true);
+      setIsAuthLoaded(true);
+    });
+
+    return () => unsubscribe();
   }, []);
 
-  const login = (email: string) => {
-    // This is a mock login. In a real app, you'd call an API.
-    const mockUser = { id: crypto.randomUUID(), email };
-    setUser(mockUser);
-    localStorage.setItem('howzue-user', JSON.stringify(mockUser));
-  };
-  
-  const signup = (email: string) => {
-    // This is a mock signup. In a real app, you'd call an API.
-    const mockUser = { id: crypto.randomUUID(), email };
-    setUser(mockUser);
-    localStorage.setItem('howzue-user', JSON.stringify(mockUser));
+  const login = async (email: string, password: string) => {
+    await signInWithEmailAndPassword(auth, email, password);
   };
 
-  const logout = () => {
-    setUser(null);
-    localStorage.removeItem('howzue-user');
+  const signup = async (email: string, password: string) => {
+    await createUserWithEmailAndPassword(auth, email, password);
   };
-  
-  const authState: AuthState = { user, isAuthLoaded, login, signup, logout };
+
+  const logout = async () => {
+    await signOut(auth);
+  };
+
+  const authState: AuthState = useMemo(() => ({
+    user,
+    isAuthLoaded,
+    login,
+    signup,
+    logout,
+  }), [user, isAuthLoaded]);
 
   return (
     <AuthContext.Provider value={authState}>

@@ -6,6 +6,7 @@ import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import React from 'react';
 import { useRouter } from 'next/navigation';
+import { useToast } from '@/hooks/use-toast';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -21,29 +22,43 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { useAuth } from '@/hooks/use-auth';
 import { Logo } from '@/components/logo';
+import { Loader2 } from 'lucide-react';
 
 const formSchema = z.object({
   email: z.string().email({ message: 'Please enter a valid email.' }),
-  password: z.string().min(1, { message: 'Password cannot be empty.' }),
+  password: z.string().min(6, { message: 'Password must be at least 6 characters.' }),
 });
 
 type FormValues = z.infer<typeof formSchema>;
 
 function AuthForm({ type, onAuth }: { type: 'login' | 'signup'; onAuth: () => void }) {
     const { login, signup } = useAuth();
+    const { toast } = useToast();
+    const [isLoading, setIsLoading] = React.useState(false);
     
     const form = useForm<FormValues>({
         resolver: zodResolver(formSchema),
         defaultValues: { email: '', password: '' },
     });
 
-    const handleSubmit = (data: FormValues) => {
-        if (type === 'login') {
-            login(data.email);
-        } else {
-            signup(data.email);
+    const handleSubmit = async (data: FormValues) => {
+        setIsLoading(true);
+        try {
+            if (type === 'login') {
+                await login(data.email, data.password);
+            } else {
+                await signup(data.email, data.password);
+            }
+            onAuth();
+        } catch (error: any) {
+            toast({
+                variant: 'destructive',
+                title: 'Authentication Failed',
+                description: error.message,
+            });
+        } finally {
+            setIsLoading(false);
         }
-        onAuth();
     };
 
     return (
@@ -56,7 +71,7 @@ function AuthForm({ type, onAuth }: { type: 'login' | 'signup'; onAuth: () => vo
                 <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                    <Input placeholder="name@example.com" {...field} />
+                    <Input placeholder="name@example.com" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
@@ -69,13 +84,14 @@ function AuthForm({ type, onAuth }: { type: 'login' | 'signup'; onAuth: () => vo
                 <FormItem>
                     <FormLabel>Password</FormLabel>
                     <FormControl>
-                    <Input type="password" placeholder="••••••••" {...field} />
+                    <Input type="password" placeholder="••••••••" {...field} disabled={isLoading} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>
                 )}
             />
-            <Button type="submit" className="w-full">
+            <Button type="submit" className="w-full" disabled={isLoading}>
+                {isLoading && <Loader2 className="animate-spin" />}
                 {type === 'login' ? 'Sign In' : 'Create Account'}
             </Button>
             </form>
@@ -85,17 +101,25 @@ function AuthForm({ type, onAuth }: { type: 'login' | 'signup'; onAuth: () => vo
 
 export default function LoginPage() {
     const router = useRouter();
-    const { user } = useAuth();
+    const { user, isAuthLoaded } = useAuth();
 
     React.useEffect(() => {
-        if (user) {
+        if (isAuthLoaded && user) {
             router.push('/');
         }
-    }, [user, router]);
+    }, [user, isAuthLoaded, router]);
 
     const handleAuthSuccess = () => {
         router.push('/');
     };
+
+    if (!isAuthLoaded || user) {
+        return (
+            <div className="flex h-screen w-full items-center justify-center">
+                <Loader2 className="h-8 w-8 animate-spin" />
+            </div>
+        )
+    }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">

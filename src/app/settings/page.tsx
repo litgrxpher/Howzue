@@ -37,7 +37,7 @@ import { useRouter } from 'next/navigation';
 
 export default function SettingsPage() {
   const { settings, updateSettings, deleteAllData } = useAppStore();
-  const { logout } = useAuth();
+  const { logout, user } = useAuth();
   const router = useRouter();
   const { toast } = useToast();
 
@@ -45,16 +45,16 @@ export default function SettingsPage() {
     updateSettings({ ...settings, theme });
   };
 
-  const handleDeleteData = () => {
-    deleteAllData();
+  const handleDeleteData = async () => {
+    await deleteAllData();
     toast({
       title: 'Data Deleted',
-      description: 'All your journal entries have been deleted.',
+      description: 'All your journal entries have been deleted from your account.',
     });
   };
 
-  const handleLogout = () => {
-    logout();
+  const handleLogout = async () => {
+    await logout();
     router.push('/login');
     toast({
         title: 'Logged Out',
@@ -66,7 +66,7 @@ export default function SettingsPage() {
     <div className="flex flex-col gap-8">
       <div>
         <h1 className="text-3xl sm:text-4xl font-bold tracking-tight font-headline">Settings</h1>
-        <p className="text-muted-foreground text-base sm:text-lg">Manage your app preferences.</p>
+        <p className="text-muted-foreground text-base sm:text-lg">Manage your app preferences and account.</p>
       </div>
       <Card className="shadow-lg">
         <CardHeader>
@@ -98,15 +98,17 @@ export default function SettingsPage() {
       <Card className="shadow-lg border-destructive/50">
         <CardHeader>
             <CardTitle className="text-xl sm:text-2xl">Account & Data</CardTitle>
-            <CardDescription>Manage your session and personal data.</CardDescription>
+            {user?.email && (
+              <CardDescription>You are logged in as {user.email}.</CardDescription>
+            )}
         </CardHeader>
         <CardContent className="space-y-4 pt-4">
             <div className="flex items-start gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800/50">
                 <Info className="w-5 h-5 mt-1 text-blue-600 dark:text-blue-400 flex-shrink-0" />
                 <div>
-                    <h3 className="font-semibold text-blue-800 dark:text-blue-300">Your Data is Yours</h3>
+                    <h3 className="font-semibold text-blue-800 dark:text-blue-300">Your Data is Secure in the Cloud</h3>
                     <p className="text-sm text-blue-700 dark:text-blue-400/80">
-                    All your journal entries and mood data are stored locally on your device's browser. We do not collect or store your personal data on our servers. When you use AI features, anonymized text may be sent to our AI provider to generate insights.
+                    All your journal entries and mood data are securely stored in your private Firebase account and encrypted in transit and at rest. When you use AI features, anonymized text may be sent to our AI provider to generate insights.
                     </p>
                 </div>
             </div>
@@ -120,14 +122,14 @@ export default function SettingsPage() {
             <AlertDialogTrigger asChild>
               <Button variant="destructive" className="shadow-md w-full sm:w-auto">
                 <Trash2 className="mr-2" />
-                Delete All Data
+                Delete All Account Data
               </Button>
             </AlertDialogTrigger>
             <AlertDialogContent>
               <AlertDialogHeader>
                 <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
                 <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete all your journal entries from this device's browser.
+                  This action cannot be undone. This will permanently delete all your journal entries from your account in the cloud.
                 </AlertDialogDescription>
               </AlertDialogHeader>
               <AlertDialogFooter>

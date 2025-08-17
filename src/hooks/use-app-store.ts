@@ -1,18 +1,32 @@
 
 'use client';
 
-import { createContext, useContext, useState, useEffect, useMemo } from 'react';
+import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { differenceInCalendarDays, isSameDay, startOfWeek, subDays } from 'date-fns';
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  getDocs,
+  query,
+  where,
+  orderBy,
+  deleteDoc,
+  writeBatch,
+  doc,
+} from 'firebase/firestore';
 import type { JournalEntry, Settings } from '@/lib/types';
+import { useAuth } from './use-auth';
+import { db } from '@/lib/firebase';
 
 interface AppState {
   entries: JournalEntry[];
   settings: Settings;
   streak: number;
   weeklyAverageMood: number | null;
-  addEntry: (entry: Omit<JournalEntry, 'id' | 'date'>) => void;
+  addEntry: (entry: Omit<JournalEntry, 'id' | 'date'>) => Promise<void>;
   updateSettings: (newSettings: Settings) => void;
-  deleteAllData: () => void;
+  deleteAllData: () => Promise<void>;
 }
 
 export const AppContext = createContext<AppState | undefined>(undefined);
@@ -22,65 +36,107 @@ export const defaultSettings: Settings = {
 };
 
 export const useApp = () => {
+  const { user } = useAuth();
   const [entries, setEntries] = useState<JournalEntry[]>([]);
   const [settings, setSettings] = useState<Settings>(defaultSettings);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isStoreLoaded, setIsStoreLoaded] = useState(false);
 
+  // Fetch entries from Firestore when user is logged in
+  useEffect(() => {
+    if (user) {
+      const fetchEntries = async () => {
+        try {
+          const entriesCollection = collection(db, 'users', user.id, 'entries');
+          const q = query(entriesCollection, orderBy('date', 'desc'));
+          const querySnapshot = await getDocs(q);
+          const userEntries = querySnapshot.docs.map(doc => ({
+            id: doc.id,
+            ...doc.data(),
+          })) as JournalEntry[];
+          setEntries(userEntries);
+        } catch (error) {
+          console.error('Failed to fetch entries from Firestore', error);
+        }
+      };
+      fetchEntries();
+    } else {
+      // Clear entries when user logs out
+      setEntries([]);
+    }
+  }, [user]);
+
+  // Load settings from local storage
   useEffect(() => {
     try {
-      const storedEntries = localStorage.getItem('howzue-entries');
       const storedSettings = localStorage.getItem('howzue-settings');
-      if (storedEntries) {
-        setEntries(JSON.parse(storedEntries));
-      }
       if (storedSettings) {
         setSettings(JSON.parse(storedSettings));
       }
     } catch (error) {
-      console.error('Failed to load data from localStorage', error);
+      console.error('Failed to load settings from localStorage', error);
     }
-    setIsLoaded(true);
+    setIsStoreLoaded(true);
   }, []);
 
+  // Save settings to local storage
   useEffect(() => {
-    if(isLoaded) {
-      localStorage.setItem('howzue-entries', JSON.stringify(entries));
-    }
-  }, [entries, isLoaded]);
-
-  useEffect(() => {
-    if(isLoaded) {
+    if (isStoreLoaded) {
       localStorage.setItem('howzue-settings', JSON.stringify(settings));
     }
-  }, [settings, isLoaded]);
+  }, [settings, isStoreLoaded]);
 
-  const addEntry = (newEntryData: Omit<JournalEntry, 'id' | 'date'>) => {
-    const today = new Date();
-    
-    // Always add a new entry, don't update existing ones
-    const newEntry: JournalEntry = {
-      id: crypto.randomUUID(),
-      date: today.toISOString(),
+  const addEntry = useCallback(async (newEntryData: Omit<JournalEntry, 'id' | 'date'>) => {
+    if (!user) {
+      console.error('User not logged in, cannot add entry');
+      return;
+    }
+
+    const newEntry: Omit<JournalEntry, 'id'> = {
+      date: new Date().toISOString(),
       ...newEntryData,
     };
     
-    let updatedEntries = [...entries, newEntry];
-    
-    // Sort entries by date to keep them in order
-    updatedEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
-    
-    setEntries(updatedEntries);
-  };
-  
+    try {
+      const entriesCollection = collection(db, 'users', user.id, 'entries');
+      const docRef = await addDoc(entriesCollection, newEntry);
+      
+      const addedEntry: JournalEntry = {
+        id: docRef.id,
+        ...newEntry
+      }
+
+      setEntries(prevEntries => [addedEntry, ...prevEntries]);
+
+    } catch (error) {
+      console.error('Error adding document: ', error);
+    }
+  }, [user]);
+
   const updateSettings = (newSettings: Settings) => {
     setSettings(newSettings);
   };
 
-  const deleteAllData = () => {
-    setEntries([]);
-    localStorage.removeItem('howzue-entries');
-  };
-
+  const deleteAllData = useCallback(async () => {
+    if (!user) {
+      console.error('User not logged in, cannot delete data');
+      return;
+    }
+    try {
+      const entriesCollection = collection(db, 'users', user.id, 'entries');
+      const querySnapshot = await getDocs(entriesCollection);
+      
+      const batch = writeBatch(db);
+      querySnapshot.forEach(document => {
+        batch.delete(doc(db, 'users', user.id, 'entries', document.id));
+      });
+      
+      await batch.commit();
+      setEntries([]);
+    } catch (error) {
+      console.error('Error deleting all documents: ', error);
+    }
+  }, [user]);
+  
   const streak = useMemo(() => {
     if (entries.length === 0) return 0;
     const sortedDates = entries
