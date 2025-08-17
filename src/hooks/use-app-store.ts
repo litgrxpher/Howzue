@@ -56,30 +56,19 @@ export const useApp = () => {
 
   const addEntry = (newEntryData: Omit<JournalEntry, 'id' | 'date'>) => {
     const today = new Date();
-    const existingEntryIndex = entries.findIndex((entry) =>
-      isSameDay(new Date(entry.date), today)
-    );
-
-    let updatedEntries;
-    if (existingEntryIndex > -1) {
-      // Update today's entry
-      updatedEntries = [...entries];
-      updatedEntries[existingEntryIndex] = {
-        ...updatedEntries[existingEntryIndex],
-        ...newEntryData,
-      };
-    } else {
-      // Add a new entry
-      const newEntry: JournalEntry = {
-        id: crypto.randomUUID(),
-        date: today.toISOString(),
-        ...newEntryData,
-      };
-      updatedEntries = [...entries, newEntry];
-    }
     
-    // Sort entries by date just in case
-    updatedEntries.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+    // Always add a new entry, don't update existing ones
+    const newEntry: JournalEntry = {
+      id: crypto.randomUUID(),
+      date: today.toISOString(),
+      ...newEntryData,
+    };
+    
+    let updatedEntries = [...entries, newEntry];
+    
+    // Sort entries by date to keep them in order
+    updatedEntries.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
+    
     setEntries(updatedEntries);
   };
   
