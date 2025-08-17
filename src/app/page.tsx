@@ -1,20 +1,31 @@
+
 'use client';
 
 import React from 'react';
 import { format } from 'date-fns';
-import { Smile, Zap, TrendingUp, CalendarDays } from 'lucide-react';
+import { Smile, Zap, TrendingUp, CalendarDays, Calendar as CalendarIcon } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Calendar } from '@/components/ui/calendar';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
 import { MoodSelector } from '@/components/mood-selector';
 import { useAppStore } from '@/hooks/use-app-store';
 import { MOODS } from '@/lib/constants';
+import { cn } from '@/lib/utils';
 
 export default function DashboardPage() {
   const { entries, streak, weeklyAverageMood } = useAppStore();
+  const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
 
-  const today = format(new Date(), 'EEEE, MMMM d');
-  const todayEntry = entries.find(
-    (entry) => new Date(entry.date).toDateString() === new Date().toDateString()
+  const isToday = format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+
+  const selectedDateEntry = entries.find(
+    (entry) => new Date(entry.date).toDateString() === selectedDate.toDateString()
   );
 
   const averageMoodEmoji = React.useMemo(() => {
@@ -29,9 +40,38 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">Welcome back!</h1>
-        <p className="text-muted-foreground">{today}</p>
+      <div className="flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight font-headline">Welcome back!</h1>
+          <p className="text-muted-foreground">
+            {isToday ? "Here's your summary for today" : `Viewing data for ${format(selectedDate, 'EEEE, MMMM d')}`}
+          </p>
+        </div>
+        <Popover>
+          <PopoverTrigger asChild>
+            <Button
+              variant={'outline'}
+              className={cn(
+                'w-[280px] justify-start text-left font-normal',
+                !selectedDate && 'text-muted-foreground'
+              )}
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              {format(selectedDate, 'PPP')}
+            </Button>
+          </PopoverTrigger>
+          <PopoverContent className="w-auto p-0">
+            <Calendar
+              mode="single"
+              selected={selectedDate}
+              onSelect={(date) => setSelectedDate(date || new Date())}
+              disabled={(date) =>
+                date > new Date() || date < new Date('2000-01-01')
+              }
+              initialFocus
+            />
+          </PopoverContent>
+        </Popover>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
@@ -75,16 +115,29 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Smile size={24} />
-            How are you feeling today?
+            {isToday ? "How are you feeling today?" : `On ${format(selectedDate, 'MMMM d')}, you felt...`}
           </CardTitle>
-          {todayEntry && (
+          {selectedDateEntry && isToday && (
              <CardDescription>
-              You've already logged your mood today as {todayEntry.mood}. You can update it if you like.
+              You've already logged your mood today as {selectedDateEntry.mood}. You can update it if you like.
              </CardDescription>
           )}
         </CardHeader>
         <CardContent>
-          <MoodSelector />
+          {isToday ? (
+            <MoodSelector />
+          ) : (
+            <div className="flex items-center justify-center p-8 bg-muted/50 rounded-lg text-center">
+              {selectedDateEntry ? (
+                <div>
+                  <span className="text-6xl">{MOODS.find(m => m.name === selectedDateEntry.mood)?.emoji}</span>
+                  <p className="text-xl font-semibold capitalize mt-2">{selectedDateEntry.mood}</p>
+                </div>
+              ) : (
+                <p className="text-muted-foreground">No entry logged on this day.</p>
+              )}
+            </div>
+          )}
         </CardContent>
       </Card>
     </div>
