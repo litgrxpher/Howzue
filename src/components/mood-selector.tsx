@@ -24,17 +24,17 @@ export function MoodSelector() {
   };
 
   return (
-    <div className="flex flex-wrap justify-center gap-4 sm:gap-6 p-4">
+    <div className="flex flex-wrap justify-center gap-2 sm:gap-4 p-2">
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         {MOODS.map(({ name, emoji }) => (
           <DialogTrigger asChild key={name}>
             <Button
               variant="outline"
-              className="flex-col h-32 w-32 gap-2 rounded-xl shadow-md transition-all duration-200 hover:shadow-xl hover:scale-105 hover:border-primary focus:scale-105 focus:shadow-xl focus:border-primary"
+              className="flex-col h-28 w-28 sm:h-32 sm:w-32 gap-1 sm:gap-2 rounded-xl shadow-md transition-all duration-200 hover:shadow-xl hover:scale-105 hover:border-primary focus:scale-105 focus:shadow-xl focus:border-primary"
               onClick={() => handleMoodSelect(name)}
             >
-              <span className="text-6xl">{emoji}</span>
-              <span className="text-base capitalize font-semibold text-muted-foreground">{name}</span>
+              <span className="text-5xl sm:text-6xl">{emoji}</span>
+              <span className="text-sm sm:text-base capitalize font-semibold text-muted-foreground">{name}</span>
             </Button>
           </DialogTrigger>
         ))}
