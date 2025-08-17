@@ -29,7 +29,7 @@ const navItems = [
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
-function NavMenu() {
+function NavMenu({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const { isCollapsed } = useSidebar();
   
@@ -41,6 +41,7 @@ function NavMenu() {
               asChild
               isActive={pathname === item.href}
               tooltip={{ children: item.label }}
+              onClick={onNavigate}
             >
               <Link href={item.href}>
                 <item.icon />
@@ -72,6 +73,12 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       setIsSidebarCollapsed(true);
     }
   }, [isMobile]);
+
+  const handleNavigate = () => {
+    if (isMobile) {
+      setIsSidebarOpen(false);
+    }
+  };
   
   const sidebarContent = (
     <>
@@ -79,7 +86,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <Logo />
       </SidebarHeader>
       <SidebarContent>
-        <NavMenu />
+        <NavMenu onNavigate={handleNavigate} />
       </SidebarContent>
     </>
   );
