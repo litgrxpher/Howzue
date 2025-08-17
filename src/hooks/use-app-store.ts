@@ -92,8 +92,8 @@ export const useApp = () => {
     }
 
     const newEntry: Omit<JournalEntry, 'id'> = {
-      date: new Date().toISOString(),
       ...newEntryData,
+      date: new Date().toISOString(),
     };
     
     try {
@@ -105,7 +105,7 @@ export const useApp = () => {
         ...newEntry
       }
 
-      setEntries(prevEntries => [addedEntry, ...prevEntries]);
+      setEntries(prevEntries => [addedEntry, ...prevEntries].sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()));
 
     } catch (error) {
       console.error('Error adding document: ', error);
