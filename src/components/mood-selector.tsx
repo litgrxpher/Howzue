@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { JournalForm } from './journal-form';
 import type { Mood } from '@/lib/types';
 import { MOODS } from '@/lib/constants';
+import Image from 'next/image';
 
 export function MoodSelector() {
   const [selectedMood, setSelectedMood] = React.useState<Mood | null>(null);
@@ -33,7 +34,7 @@ export function MoodSelector() {
               className="flex-col h-24 w-24 gap-2 rounded-lg transition-all duration-200 hover:bg-accent hover:scale-105"
               onClick={() => handleMoodSelect(name)}
             >
-              <span className="text-4xl">{emoji}</span>
+              <Image src={emoji} alt={name} width={40} height={40} />
               <span className="text-sm capitalize text-muted-foreground">{name}</span>
             </Button>
           </DialogTrigger>

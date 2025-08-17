@@ -5,9 +5,23 @@ import { format } from 'date-fns';
 import type { JournalEntry } from '@/lib/types';
 import { MOODS } from '@/lib/constants';
 import { Card } from './ui/card';
+import Image from 'next/image';
 
 interface MoodChartProps {
   entries: JournalEntry[];
+}
+
+const YAxisTick = (props: any) => {
+  const { x, y, payload } = props;
+  const mood = MOODS.find(m => m.value === payload.value);
+  if (mood) {
+    return (
+      <g transform={`translate(${x - 20},${y})`}>
+        <image href={mood.emoji} x={0} y={-10} height="20px" width="20px" />
+      </g>
+    );
+  }
+  return null;
 }
 
 export function MoodChart({ entries }: MoodChartProps) {
@@ -29,9 +43,10 @@ export function MoodChart({ entries }: MoodChartProps) {
       const moodValue = payload[0].value;
       const mood = MOODS.find(m => m.value === moodValue);
       return (
-        <Card className="p-2">
-            <p className="text-sm font-bold">{label}</p>
-            <p className="text-sm">Mood: {mood?.emoji} {mood?.name}</p>
+        <Card className="p-2 flex items-center gap-2">
+            <p className="text-sm font-bold">{label}:</p>
+            {mood && <Image src={mood.emoji} alt={mood.name} width={20} height={20} />}
+            <p className="text-sm">{mood?.name}</p>
         </Card>
       );
     }
@@ -42,7 +57,7 @@ export function MoodChart({ entries }: MoodChartProps) {
   return (
     <div style={{ width: '100%', height: 300 }}>
       <ResponsiveContainer>
-        <LineChart data={formattedData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+        <LineChart data={formattedData} margin={{ top: 5, right: 20, left: 0, bottom: 5 }}>
           <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" />
           <XAxis 
             dataKey="formattedDate" 
@@ -54,11 +69,11 @@ export function MoodChart({ entries }: MoodChartProps) {
           <YAxis 
             domain={[0.5, 5.5]} 
             ticks={[1, 2, 3, 4, 5]}
-            tickFormatter={(value) => MOODS.find(m => m.value === value)?.emoji || ''}
+            tick={<YAxisTick />}
             stroke="hsl(var(--muted-foreground))"
-            fontSize={16}
             tickLine={false}
             axisLine={false}
+            width={40}
           />
           <Tooltip content={<CustomTooltip />} />
           <Line 

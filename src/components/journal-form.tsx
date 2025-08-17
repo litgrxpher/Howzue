@@ -4,6 +4,7 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
+import Image from 'next/image';
 
 import { Button } from '@/components/ui/button';
 import {
@@ -83,7 +84,7 @@ export function JournalForm({ initialMood, onSave }: JournalFormProps) {
                           field.value === name ? 'border-primary' : ''
                         }`}
                       >
-                        <span className="text-2xl">{emoji}</span>
+                        <Image src={emoji} alt={name} width={24} height={24} />
                         <span className="text-xs capitalize">{name}</span>
                       </FormLabel>
                     </FormItem>

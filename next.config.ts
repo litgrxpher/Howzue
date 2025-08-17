@@ -16,6 +16,12 @@ const nextConfig: NextConfig = {
         port: '',
         pathname: '/**',
       },
+      {
+        protocol: 'https',
+        hostname: 'twemoji.maxcdn.com',
+        port: '',
+        pathname: '/**',
+      }
     ],
   },
 };
