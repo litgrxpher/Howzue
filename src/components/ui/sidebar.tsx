@@ -1,3 +1,4 @@
+
 "use client"
 
 import * as React from "react"
@@ -14,7 +15,6 @@ import { Button, type ButtonProps } from "./button"
 
 const SIDEBAR_WIDTH_VAR = "--sidebar-width"
 const SIDEBAR_WIDTH_ICON_VAR = "--sidebar-width-icon"
-const SIDEBAR_COLLAPSED = "data-sidebar-collapsed"
 
 type SidebarContextValue = {
   isCollapsed: boolean
@@ -25,7 +25,7 @@ type SidebarContextValue = {
 
 const SidebarContext = React.createContext<SidebarContextValue | null>(null)
 
-const useSidebar = () => {
+export const useSidebar = () => {
   const context = React.useContext(SidebarContext)
 
   if (!context) {
@@ -36,13 +36,13 @@ const useSidebar = () => {
 }
 
 type SidebarProviderProps = React.PropsWithChildren<{
-  isCollapsed?: boolean
-  isMobile?: boolean
+  isCollapsed: boolean
+  isMobile: boolean
   width?: number
   widthIcon?: number
 }>
 
-const SidebarProvider = React.forwardRef<
+export const SidebarProvider = React.forwardRef<
   HTMLDivElement,
   SidebarProviderProps
 >(({ isCollapsed = false, isMobile = false, ...props }, ref) => {
@@ -80,11 +80,13 @@ const SidebarProvider = React.forwardRef<
 
 SidebarProvider.displayName = "SidebarProvider"
 
-const Sidebar = React.forwardRef<
+export const Sidebar = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
     side?: "left" | "right"
     collapsible?: "icon" | "button"
+    isCollapsed: boolean
+    isMobile: boolean
     onCollapse?: (collapsed: boolean) => void
   }
 >(
@@ -92,44 +94,28 @@ const Sidebar = React.forwardRef<
     {
       className,
       side = "left",
-      collapsible,
+      collapsible = "icon",
       onCollapse,
-      "data-collapsed": dataCollapsed,
+      isCollapsed,
+      isMobile,
       ...props
     },
     ref
   ) => {
-    const isClient = typeof window !== "undefined"
-    const [isCollapsed, setIsCollapsed] = React.useState(
-      dataCollapsed ?? false
-    )
-    const isMobile = useMediaQuery("(max-width: 640px)")
-    const [isOverlay, setIsOverlay] = React.useState(isMobile)
 
-    const handleCollapse = React.useCallback(
-      (collapsed: boolean) => {
-        setIsCollapsed(collapsed)
-        onCollapse?.(collapsed)
-      },
-      [onCollapse]
-    )
+    const handleCollapse = React.useCallback(() => {
+        onCollapse?.(!isCollapsed);
+    },[isCollapsed, onCollapse])
 
-    React.useEffect(() => {
-      setIsOverlay(isMobile)
-    }, [isMobile])
-
-    if (!isClient) {
-      return null
+    if (isMobile) {
+      return null;
     }
-
+    
     return (
       <SidebarProvider
         isCollapsed={isCollapsed}
         isMobile={isMobile}
       >
-        {isOverlay ? (
-          <SidebarOverlay onCollapse={() => handleCollapse(false)} />
-        ) : null}
         <div
           ref={ref}
           className={cn(
@@ -176,7 +162,7 @@ const SidebarCollapse = (props: {
   side: "left" | "right"
   isCollapsed: boolean
   collapsible?: "icon" | "button"
-  onCollapse: (collapsed: boolean) => void
+  onCollapse: () => void
 }) => {
   return (
     <Button
@@ -188,7 +174,7 @@ const SidebarCollapse = (props: {
         props.side === "right" && "right-2",
         props.collapsible === "button" && "sm:hidden"
       )}
-      onClick={() => props.onCollapse(!props.isCollapsed)}
+      onClick={props.onCollapse}
     >
       <MoreHorizontal />
     </Button>
@@ -197,7 +183,7 @@ const SidebarCollapse = (props: {
 
 SidebarCollapse.displayName = "SidebarCollapse"
 
-const SidebarHeader = React.forwardRef<
+export const SidebarHeader = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
@@ -214,7 +200,7 @@ const SidebarHeader = React.forwardRef<
 
 SidebarHeader.displayName = "SidebarHeader"
 
-const SidebarContent = React.forwardRef<
+export const SidebarContent = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
@@ -234,7 +220,7 @@ const SidebarContent = React.forwardRef<
 
 SidebarContent.displayName = "SidebarContent"
 
-const SidebarFooter = React.forwardRef<
+export const SidebarFooter = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
@@ -251,14 +237,9 @@ const SidebarFooter = React.forwardRef<
 
 SidebarFooter.displayName = "SidebarFooter"
 
-const SidebarMenu = React.forwardRef<
+export const SidebarMenu = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement> & {
-    /**
-     * Set to true to display a separator between each menu item.
-     * @default false
-     * @type boolean
-     */
     separator?: boolean
   }
 >(({ className, separator = false, ...props }, ref) => {
@@ -279,7 +260,7 @@ const SidebarMenu = React.forwardRef<
 
 SidebarMenu.displayName = "SidebarMenu"
 
-const SidebarMenuItem = React.forwardRef<
+export const SidebarMenuItem = React.forwardRef<
   HTMLDivElement,
   React.HTMLAttributes<HTMLDivElement>
 >(({ className, ...props }, ref) => {
@@ -294,7 +275,7 @@ const SidebarMenuItem = React.forwardRef<
 
 SidebarMenuItem.displayName = "SidebarMenuItem"
 
-const SidebarMenuButton = React.forwardRef<
+export const SidebarMenuButton = React.forwardRef<
   HTMLButtonElement,
   ButtonProps & {
     isActive?: boolean
@@ -335,10 +316,25 @@ const SidebarMenuButton = React.forwardRef<
 
 SidebarMenuButton.displayName = "SidebarMenuButton"
 
-const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
+export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
   (props, ref) => {
-    const isMobile = useMediaQuery("(max-width: 640px)")
     const [isOpen, setIsOpen] = React.useState(false)
+    const isMobile = useIsMobile();
+    
+    const sidebarContent = (
+      <>
+        <div className="absolute right-2 top-2">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => setIsOpen(false)}
+          >
+            <X />
+          </Button>
+        </div>
+        {props.children}
+      </>
+    );
 
     if (!isMobile) {
       return null
@@ -352,79 +348,16 @@ const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
           onClick={() => setIsOpen(true)}
         />
         {isOpen ? (
-          <div className="fixed inset-y-0 left-0 z-40 w-[var(--sidebar-width)] animate-in slide-in-from-left-full duration-300 sm:hidden">
-            <div className="absolute right-2 top-2">
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => setIsOpen(false)}
-              >
-                <X />
-              </Button>
+          <SidebarProvider isCollapsed={!isOpen} isMobile={isMobile}>
+            <div className="fixed inset-y-0 left-0 z-40 w-[var(--sidebar-width)] animate-in slide-in-from-left-full duration-300 sm:hidden bg-sidebar border-r">
+                {sidebarContent}
             </div>
-            {props.children}
-          </div>
+            <SidebarOverlay onCollapse={() => setIsOpen(false)} />
+          </SidebarProvider>
         ) : null}
-        {isOpen ? <SidebarOverlay onCollapse={() => setIsOpen(false)} /> : null}
       </>
     )
   }
 )
 
 SidebarTrigger.displayName = "SidebarTrigger"
-
-const SidebarInset = React.forwardRef<
-  HTMLDivElement,
-  React.HTMLAttributes<HTMLDivElement> & {
-    side?: "left" | "right"
-  }
->(({ className, side = "left", ...props }, ref) => {
-  const { isCollapsed } = useSidebar()
-  return (
-    <div
-      ref={ref}
-      className={cn(
-        "transition-all duration-300 ease-in-out",
-        isCollapsed
-          ? `pl-[var(--sidebar-width-icon)]`
-          : `pl-[var(--sidebar-width)]`,
-        className
-      )}
-      {...props}
-    />
-  )
-})
-
-SidebarInset.displayName = "SidebarInset"
-
-function useMediaQuery(query: string) {
-  const [value, setValue] = React.useState(false)
-
-  React.useEffect(() => {
-    function onChange(event: MediaQueryListEvent) {
-      setValue(event.matches)
-    }
-
-    const result = matchMedia(query)
-    result.addEventListener("change", onChange)
-    setValue(result.matches)
-
-    return () => result.removeEventListener("change", onChange)
-  }, [query])
-
-  return value
-}
-
-export {
-  SidebarProvider,
-  useSidebar,
-  Sidebar,
-  SidebarHeader,
-  SidebarContent,
-  SidebarFooter,
-  SidebarMenu,
-  SidebarMenuItem,
-  SidebarMenuButton,
-  SidebarTrigger,
-  SidebarInset,
-}
