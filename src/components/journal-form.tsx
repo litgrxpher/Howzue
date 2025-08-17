@@ -1,3 +1,4 @@
+
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -18,7 +19,6 @@ import { Textarea } from '@/components/ui/textarea';
 import { useAppStore } from '@/hooks/use-app-store';
 import type { Mood } from '@/lib/types';
 import { MOODS } from '@/lib/constants';
-import { AiPrompts } from './ai-prompts';
 import { useToast } from '@/hooks/use-toast';
 
 const journalFormSchema = z.object({
@@ -38,7 +38,7 @@ interface JournalFormProps {
 }
 
 export function JournalForm({ initialMood, onSave }: JournalFormProps) {
-  const { addEntry, entries, settings } = useAppStore();
+  const { addEntry } = useAppStore();
   const { toast } = useToast();
 
   const form = useForm<JournalFormValues>({
@@ -111,12 +111,6 @@ export function JournalForm({ initialMood, onSave }: JournalFormProps) {
             </FormItem>
           )}
         />
-        {settings.enableAiInsights && (
-           <AiPrompts 
-             entries={entries}
-             onPromptSelect={(prompt) => form.setValue('text', form.getValues('text') + prompt)} 
-           />
-        )}
         <Button type="submit">Save Entry</Button>
       </form>
     </Form>
