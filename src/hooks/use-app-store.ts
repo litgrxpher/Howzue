@@ -3,7 +3,7 @@
 
 import { createContext, useContext, useState, useEffect, useMemo, useCallback } from 'react';
 import { differenceInCalendarDays, isSameDay, startOfWeek, subDays } from 'date-fns';
-import type { JournalEntry, Settings } from '@/lib/types';
+import type { JournalEntry, Settings, Mood } from '@/lib/types';
 import { useAuth } from './use-auth';
 
 interface AppState {
@@ -11,7 +11,7 @@ interface AppState {
   settings: Settings;
   streak: number;
   weeklyAverageMood: number | null;
-  addEntry: (entry: Omit<JournalEntry, 'id' | 'date'>) => Promise<void>;
+  addEntry: (entry: { mood: Mood; text: string }) => Promise<void>;
   updateSettings: (newSettings: Settings) => void;
   deleteAllData: () => Promise<void>;
 }
@@ -62,15 +62,15 @@ export const useApp = () => {
     setIsStoreLoaded(true);
   }, []);
 
-  const addEntry = useCallback(async (newEntryData: Omit<JournalEntry, 'id' | 'date'>) => {
+  const addEntry = useCallback(async (newEntryData: { mood: Mood; text: string }) => {
     const newEntry: JournalEntry = {
-      id: new Date().toISOString(), // Simple unique ID
+      id: new Date().toISOString() + Math.random(), // Simple unique ID
       ...newEntryData,
       date: new Date().toISOString(),
     };
     
-    setEntries([newEntry, ...entries]);
-  }, [entries, setEntries]);
+    setEntries((prevEntries) => [newEntry, ...prevEntries]);
+  }, [setEntries]);
 
   const updateSettings = (newSettings: Settings) => {
     setSettings(newSettings);

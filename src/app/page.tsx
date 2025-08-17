@@ -2,8 +2,8 @@
 'use client';
 
 import React from 'react';
-import { format } from 'date-fns';
-import { Smile, Zap, TrendingUp, CalendarDays, Calendar as CalendarIcon } from 'lucide-react';
+import { format, isToday as isTodayDateFns } from 'date-fns';
+import { Smile, Zap, TrendingUp, CalendarDays, Calendar as CalendarIcon, History, LineChart } from 'lucide-react';
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -17,14 +17,16 @@ import { MoodSelector } from '@/components/mood-selector';
 import { useAppStore } from '@/hooks/use-app-store';
 import { MOODS } from '@/lib/constants';
 import { cn } from '@/lib/utils';
+import { DailyMoodList } from '@/components/daily-mood-list';
+import { DailyMoodChart } from '@/components/daily-mood-chart';
 
 export default function DashboardPage() {
   const { entries, streak, weeklyAverageMood } = useAppStore();
   const [selectedDate, setSelectedDate] = React.useState<Date>(new Date());
 
-  const isToday = format(selectedDate, 'yyyy-MM-dd') === format(new Date(), 'yyyy-MM-dd');
+  const isToday = isTodayDateFns(selectedDate);
 
-  const selectedDateEntry = entries.find(
+  const selectedDateEntries = entries.filter(
     (entry) => new Date(entry.date).toDateString() === selectedDate.toDateString()
   );
 
@@ -117,23 +119,19 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <Smile size={28} className="text-primary"/>
-            <span className="text-xl sm:text-2xl">{isToday ? "How are you feeling today?" : `On ${format(selectedDate, 'MMMM d')}, you felt...`}</span>
+            <span className="text-xl sm:text-2xl">{isToday ? "How are you feeling right now?" : `On ${format(selectedDate, 'MMMM d')}, you felt...`}</span>
           </CardTitle>
-          {selectedDateEntry && isToday && (
-             <CardDescription>
-              You've already logged your mood today as {selectedDateEntry.mood}. You can update it if you like.
-             </CardDescription>
-          )}
         </CardHeader>
         <CardContent>
           {isToday ? (
             <MoodSelector />
           ) : (
             <div className="flex items-center justify-center p-8 bg-muted/50 rounded-lg text-center h-48">
-              {selectedDateEntry ? (
+              {selectedDateEntries.length > 0 ? (
                 <div>
-                  <span className="text-7xl">{MOODS.find(m => m.name === selectedDateEntry.mood)?.emoji}</span>
-                  <p className="text-2xl font-semibold capitalize mt-2">{selectedDateEntry.mood}</p>
+                  <span className="text-7xl">{MOODS.find(m => m.name === selectedDateEntries[0].mood)?.emoji}</span>
+                  <p className="text-2xl font-semibold capitalize mt-2">{selectedDateEntries[0].mood}</p>
+                  {selectedDateEntries.length > 1 && <p className="text-muted-foreground text-sm">and {selectedDateEntries.length - 1} other moods</p>}
                 </div>
               ) : (
                 <p className="text-muted-foreground text-lg">No entry logged on this day.</p>
@@ -142,6 +140,40 @@ export default function DashboardPage() {
           )}
         </CardContent>
       </Card>
+      
+      {selectedDateEntries.length > 0 && (
+        <div className="grid gap-8 md:grid-cols-2">
+          <Card className="animate-fade-in-up shadow-lg" style={{ animationDelay: '0.5s' }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <History size={24} className="text-primary"/>
+                <span className="text-xl sm:text-2xl">Daily Log</span>
+              </CardTitle>
+              <CardDescription>
+                Your mood entries for {format(selectedDate, 'MMMM d')}.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <DailyMoodList entries={selectedDateEntries} />
+            </CardContent>
+          </Card>
+
+          <Card className="animate-fade-in-up shadow-lg" style={{ animationDelay: '0.6s' }}>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-3">
+                <LineChart size={24} className="text-primary"/>
+                <span className="text-xl sm:text-2xl">Day's Mood Flow</span>
+              </CardTitle>
+              <CardDescription>
+                A graph of your feelings throughout the day.
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+                <DailyMoodChart entries={selectedDateEntries} />
+            </CardContent>
+          </Card>
+        </div>
+      )}
     </div>
   );
 }

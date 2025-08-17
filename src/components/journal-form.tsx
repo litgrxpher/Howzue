@@ -49,8 +49,8 @@ export function JournalForm({ initialMood, onSave }: JournalFormProps) {
     },
   });
 
-  function onSubmit(data: JournalFormValues) {
-    addEntry(data);
+  async function onSubmit(data: JournalFormValues) {
+    await addEntry(data);
     toast({
         title: "Entry Saved",
         description: "Your journal entry has been successfully saved.",
