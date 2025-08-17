@@ -1,3 +1,4 @@
+
 'use client';
 import { format } from 'date-fns';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
@@ -16,25 +17,23 @@ export function JournalList({ entries }: JournalListProps) {
       {sortedEntries.map((entry) => {
         const moodInfo = MOODS.find(m => m.name === entry.mood);
         return (
-          <Card key={entry.id} className="shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl overflow-hidden">
-            <CardHeader className="bg-gradient-to-br from-card to-muted/30 p-4 border-b">
-              <div className="flex justify-between items-center">
-                  <div className="flex items-center gap-4">
-                    {moodInfo && (
-                        <span className="text-4xl">{moodInfo.emoji}</span>
-                    )}
-                    <div>
-                        <CardTitle className="text-xl font-bold capitalize">
-                        {moodInfo?.name}
-                        </CardTitle>
-                        <CardDescription>
-                            {format(new Date(entry.date), 'EEEE, MMMM d, yyyy')}
-                        </CardDescription>
-                    </div>
+          <Card key={entry.id} className="shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl">
+            <CardHeader>
+                <div className="flex items-center gap-4">
+                  {moodInfo && (
+                      <span className="text-4xl">{moodInfo.emoji}</span>
+                  )}
+                  <div>
+                      <CardTitle className="text-xl font-bold capitalize">
+                      {moodInfo?.name}
+                      </CardTitle>
+                      <CardDescription>
+                          {format(new Date(entry.date), 'EEEE, MMMM d, yyyy')}
+                      </CardDescription>
                   </div>
-              </div>
+                </div>
             </CardHeader>
-            <CardContent className="pt-6">
+            <CardContent>
               <p className="text-base text-foreground/80 whitespace-pre-wrap leading-relaxed">{entry.text}</p>
             </CardContent>
           </Card>
