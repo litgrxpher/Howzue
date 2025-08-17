@@ -9,15 +9,15 @@ export default function CompanionPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-3xl font-bold tracking-tight font-headline">AI Companion</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight font-headline">AI Companion</h1>
+        <p className="text-muted-foreground text-base sm:text-lg">
           Chat with your AI companion for support and reflection.
         </p>
       </div>
 
       <Card>
         <CardHeader>
-          <CardTitle className="flex items-center gap-2">
+          <CardTitle className="flex items-center gap-2 text-xl sm:text-2xl">
             <Bot />
             Your Conversation
           </CardTitle>

@@ -43,8 +43,8 @@ export default function DashboardPage() {
       <div className="animate-fade-in-up">
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-4xl font-bold tracking-tight font-headline">Welcome back!</h1>
-            <p className="text-muted-foreground text-lg">
+            <h1 className="text-3xl sm:text-4xl font-bold tracking-tight font-headline">Welcome back!</h1>
+            <p className="text-muted-foreground text-base sm:text-lg">
               {isToday ? "Here's your summary for today" : `Viewing data for ${format(selectedDate, 'EEEE, MMMM d')}`}
             </p>
           </div>
@@ -53,7 +53,7 @@ export default function DashboardPage() {
               <Button
                 variant={'outline'}
                 className={cn(
-                  'w-full sm:w-[280px] justify-start text-left font-normal shadow-sm',
+                  'w-full sm:w-[280px] justify-start text-left font-normal shadow-sm text-base',
                   !selectedDate && 'text-muted-foreground'
                 )}
               >
@@ -76,7 +76,7 @@ export default function DashboardPage() {
         </div>
       </div>
 
-      <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
         <Card className="animate-fade-in-up shadow-lg transition-transform duration-300 ease-in-out hover:scale-105 hover:shadow-xl" style={{ animationDelay: '0.1s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium uppercase tracking-wider text-muted-foreground">Weekly Average</CardTitle>
@@ -117,7 +117,7 @@ export default function DashboardPage() {
         <CardHeader>
           <CardTitle className="flex items-center gap-3">
             <Smile size={28} className="text-primary"/>
-            <span className="text-2xl">{isToday ? "How are you feeling today?" : `On ${format(selectedDate, 'MMMM d')}, you felt...`}</span>
+            <span className="text-xl sm:text-2xl">{isToday ? "How are you feeling today?" : `On ${format(selectedDate, 'MMMM d')}, you felt...`}</span>
           </CardTitle>
           {selectedDateEntry && isToday && (
              <CardDescription>

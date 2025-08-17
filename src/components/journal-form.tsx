@@ -72,7 +72,7 @@ export function JournalForm({ initialMood, onSave }: JournalFormProps) {
                 <RadioGroup
                   onValueChange={field.onChange}
                   defaultValue={field.value}
-                  className="flex flex-wrap gap-4"
+                  className="flex flex-wrap gap-2 sm:gap-4"
                 >
                   {MOODS.map(({ name, emoji }) => (
                     <FormItem key={name} className="flex items-center space-x-2 space-y-0">
@@ -80,12 +80,12 @@ export function JournalForm({ initialMood, onSave }: JournalFormProps) {
                         <RadioGroupItem value={name} className="sr-only" />
                       </FormControl>
                       <FormLabel
-                        className={`flex flex-col items-center justify-center p-3 rounded-lg border-2 border-muted bg-popover hover:bg-accent/20 hover:text-accent-foreground cursor-pointer transition-all duration-200 w-20 h-20 ${
+                        className={`flex flex-col items-center justify-center p-2 rounded-lg border-2 border-muted bg-popover hover:bg-accent/20 hover:text-accent-foreground cursor-pointer transition-all duration-200 w-16 h-16 sm:w-20 sm:h-20 ${
                           field.value === name ? 'border-primary scale-110 shadow-lg' : ''
                         }`}
                       >
-                        <span className="text-3xl">{emoji}</span>
-                        <span className="text-sm capitalize mt-1">{name}</span>
+                        <span className="text-2xl sm:text-3xl">{emoji}</span>
+                        <span className="text-xs sm:text-sm capitalize mt-1">{name}</span>
                       </FormLabel>
                     </FormItem>
                   ))}

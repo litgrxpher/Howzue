@@ -65,16 +65,16 @@ export default function SettingsPage() {
   return (
     <div className="flex flex-col gap-8">
       <div>
-        <h1 className="text-4xl font-bold tracking-tight font-headline">Settings</h1>
-        <p className="text-muted-foreground text-lg">Manage your app preferences.</p>
+        <h1 className="text-3xl sm:text-4xl font-bold tracking-tight font-headline">Settings</h1>
+        <p className="text-muted-foreground text-base sm:text-lg">Manage your app preferences.</p>
       </div>
       <Card className="shadow-lg">
         <CardHeader>
-          <CardTitle className="text-2xl">Preferences</CardTitle>
+          <CardTitle className="text-xl sm:text-2xl">Preferences</CardTitle>
           <CardDescription>Customize your Howzue experience.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6 pt-4">
-          <div className="flex items-center justify-between space-x-2">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center sm:justify-between space-y-2 sm:space-y-0">
             <Label htmlFor="theme" className="flex flex-col space-y-1">
               <span className="text-base">Theme</span>
               <span className="font-normal leading-snug text-muted-foreground">
@@ -82,7 +82,7 @@ export default function SettingsPage() {
               </span>
             </Label>
             <Select onValueChange={handleThemeChange} defaultValue={settings.theme}>
-              <SelectTrigger className="w-[180px] shadow-sm">
+              <SelectTrigger className="w-full sm:w-[180px] shadow-sm">
                 <SelectValue placeholder="Select theme" />
               </SelectTrigger>
               <SelectContent>
@@ -97,7 +97,7 @@ export default function SettingsPage() {
 
       <Card className="shadow-lg border-destructive/50">
         <CardHeader>
-            <CardTitle className="text-2xl">Account & Data</CardTitle>
+            <CardTitle className="text-xl sm:text-2xl">Account & Data</CardTitle>
             <CardDescription>Manage your session and personal data.</CardDescription>
         </CardHeader>
         <CardContent className="space-y-4 pt-4">
@@ -111,14 +111,14 @@ export default function SettingsPage() {
                 </div>
             </div>
         </CardContent>
-        <CardFooter className="bg-muted/50 py-4 px-6 rounded-b-lg flex justify-start gap-2">
-          <Button onClick={handleLogout} variant="outline" className="shadow-md">
+        <CardFooter className="bg-muted/50 py-4 px-6 rounded-b-lg flex flex-col sm:flex-row sm:justify-start gap-2">
+          <Button onClick={handleLogout} variant="outline" className="shadow-md w-full sm:w-auto">
               <LogOut className="mr-2" />
               Logout
           </Button>
           <AlertDialog>
             <AlertDialogTrigger asChild>
-              <Button variant="destructive" className="shadow-md">
+              <Button variant="destructive" className="shadow-md w-full sm:w-auto">
                 <Trash2 className="mr-2" />
                 Delete All Data
               </Button>

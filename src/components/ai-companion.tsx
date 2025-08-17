@@ -76,7 +76,7 @@ export function AiCompanion() {
   }
 
   return (
-    <div className="flex flex-col h-[60vh]">
+    <div className="flex flex-col h-[65vh] sm:h-[60vh]">
       <ScrollArea className="flex-grow p-4 border rounded-lg mb-4" ref={scrollAreaRef}>
         <div className="space-y-4">
           {messages.map((message, index) => (
@@ -94,7 +94,7 @@ export function AiCompanion() {
               )}
               <div
                 className={cn(
-                  'p-3 rounded-lg max-w-sm',
+                  'p-3 rounded-lg max-w-xs sm:max-w-sm',
                   message.role === 'user'
                     ? 'bg-primary text-primary-foreground'
                     : 'bg-muted'
@@ -150,8 +150,8 @@ export function AiCompanion() {
         </Alert>
       )}
 
-      <div className="flex items-start gap-4 p-4 bg-accent/50 rounded-lg mt-6">
-          <Info className="w-5 h-5 mt-1 text-accent-foreground flex-shrink-0" />
+      <div className="flex items-start gap-2 sm:gap-4 p-3 sm:p-4 bg-accent/50 rounded-lg mt-6">
+          <Info className="w-6 h-6 sm:w-5 sm:h-5 mt-1 text-accent-foreground flex-shrink-0" />
           <div>
               <h3 className="font-semibold text-accent-foreground">Important Notice</h3>
               <p className="text-sm text-muted-foreground">

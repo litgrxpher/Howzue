@@ -1,3 +1,4 @@
+
 'use client';
 
 import { JournalForm } from '@/components/journal-form';
@@ -22,19 +23,19 @@ export default function JournalPage() {
 
   return (
     <div className="flex flex-col gap-8 h-full">
-      <div className="flex justify-between items-start">
+      <div className="flex flex-col sm:flex-row justify-between items-start gap-4">
         <div>
-          <h1 className="text-4xl font-bold tracking-tight font-headline">My Journal</h1>
-          <p className="text-muted-foreground text-lg">Your personal space to reflect and grow.</p>
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight font-headline">My Journal</h1>
+          <p className="text-muted-foreground text-base sm:text-lg">Your personal space to reflect and grow.</p>
         </div>
         <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
           <DialogTrigger asChild>
-            <Button size="lg" className="shadow-md">
+            <Button size="lg" className="shadow-md w-full sm:w-auto">
               <PenSquare className="mr-2 h-5 w-5" />
               New Entry
             </Button>
           </DialogTrigger>
-          <DialogContent className="sm:max-w-[425px] md:max-w-xl">
+          <DialogContent className="sm:max-w-xl">
             <DialogHeader>
               <DialogTitle className="text-2xl">New Journal Entry</DialogTitle>
               <DialogDescription>
@@ -50,10 +51,10 @@ export default function JournalPage() {
           <JournalList entries={entries} />
         </ScrollArea>
       ) : (
-        <div className="flex-grow flex flex-col items-center justify-center gap-4 text-center bg-gradient-to-br from-card to-muted/50 p-8 rounded-lg border-2 border-dashed">
-          <Book className="w-20 h-20 text-primary" />
-          <h2 className="text-2xl font-semibold">Your journal is empty</h2>
-          <p className="text-muted-foreground max-w-sm">
+        <div className="flex-grow flex flex-col items-center justify-center gap-4 text-center bg-gradient-to-br from-card to-muted/50 p-6 sm:p-8 rounded-lg border-2 border-dashed">
+          <Book className="w-16 h-16 sm:w-20 sm:h-20 text-primary" />
+          <h2 className="text-xl sm:text-2xl font-semibold">Your journal is empty</h2>
+          <p className="text-muted-foreground max-w-sm text-sm sm:text-base">
             Start by writing a new entry. It's a great way to understand your feelings better.
           </p>
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
@@ -63,7 +64,7 @@ export default function JournalPage() {
                 Write Your First Entry
               </Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-[425px] md:max-w-xl">
+            <DialogContent className="sm:max-w-xl">
               <DialogHeader>
                 <DialogTitle className="text-2xl">New Journal Entry</DialogTitle>
                 <DialogDescription>
