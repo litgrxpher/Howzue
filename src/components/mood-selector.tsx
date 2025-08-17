@@ -30,7 +30,7 @@ export function MoodSelector() {
           <DialogTrigger asChild key={name}>
             <Button
               variant="outline"
-              className="flex-col h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 gap-1 rounded-xl shadow-md transition-all duration-200 hover:shadow-xl hover:scale-105 hover:border-primary focus:scale-105 focus:shadow-xl focus:border-primary"
+              className="flex-col h-24 w-24 sm:h-28 sm:w-28 md:h-32 md:w-32 gap-1 rounded-xl shadow-md transition-all duration-200 hover:shadow-xl hover:scale-105 border-blue-200 hover:border-blue-400 focus:scale-105 focus:shadow-xl focus:border-blue-400 dark:border-blue-800/50 dark:hover:border-blue-700"
               onClick={() => handleMoodSelect(name)}
             >
               <span className="text-4xl sm:text-5xl md:text-6xl">{emoji}</span>
