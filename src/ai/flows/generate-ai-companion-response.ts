@@ -56,7 +56,7 @@ const generateAiCompanionResponseFlow = ai.defineFlow(
   async input => {
     const {history, message} = input;
     const {text} = await ai.generate({
-      model: ai.model,
+      model: 'googleai/gemini-2.0-flash',
       history: [
         ...history,
         { role: 'user', content: message }
@@ -71,3 +71,4 @@ const generateAiCompanionResponseFlow = ai.defineFlow(
     };
   }
 );
+
