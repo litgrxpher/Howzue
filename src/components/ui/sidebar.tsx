@@ -2,7 +2,7 @@
 "use client"
 
 import * as React from "react"
-import { ChevronsLeft, X } from "lucide-react"
+import { ChevronsLeft, ChevronsRight, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import {
@@ -128,14 +128,21 @@ export const Sidebar = React.forwardRef<
         >
           {props.children}
           {collapsible && (
-             <SidebarFooter>
+            isCollapsed ? (
+                <SidebarFooter>
+                    <SidebarCollapse
+                        side={side}
+                        isCollapsed={isCollapsed}
+                        onCollapse={handleCollapse}
+                    />
+                </SidebarFooter>
+            ) : (
                 <SidebarCollapse
-                    collapsible={collapsible}
                     side={side}
                     isCollapsed={isCollapsed}
                     onCollapse={handleCollapse}
                 />
-            </SidebarFooter>
+            )
           )}
         </div>
     )
@@ -158,20 +165,21 @@ SidebarOverlay.displayName = "SidebarOverlay"
 const SidebarCollapse = (props: {
   side: "left" | "right"
   isCollapsed: boolean
-  collapsible?: "icon" | "button"
   onCollapse: () => void
 }) => {
+  const Icon = props.side === 'left' ? ChevronsLeft : ChevronsRight;
+
   return (
     <Button
       variant="ghost"
+      size="icon"
       className={cn(
-        "w-full transition-all duration-300 ease-in-out",
-        "justify-center",
-        props.isCollapsed && "rotate-180",
+        'transition-all duration-300 ease-in-out',
+        props.isCollapsed ? 'mx-auto' : 'absolute top-2 right-2',
       )}
       onClick={props.onCollapse}
     >
-      <ChevronsLeft />
+      <Icon className={cn(props.isCollapsed && "rotate-180")}/>
     </Button>
   )
 }
