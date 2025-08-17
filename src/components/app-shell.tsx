@@ -30,6 +30,11 @@ const navItems = [
 export function AppShell({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
+  const [isSidebarOpen, setSidebarOpen] = React.useState(!isMobile);
+
+  React.useEffect(() => {
+    setSidebarOpen(!isMobile);
+  }, [isMobile]);
 
   const sidebarContent = (
     <>
@@ -46,7 +51,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
                 tooltip={{ children: item.label }}
               >
                 <Link href={item.href}>
-                  <item.icon className="h-4 w-4" />
+                  <item.icon />
                   <span>{item.label}</span>
                 </Link>
               </SidebarMenuButton>
@@ -59,19 +64,26 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
   return (
     <SidebarProvider>
-      <Sidebar side="left" collapsible="icon">
+      <Sidebar
+        side="left"
+        collapsible="icon"
+        data-collapsed={!isSidebarOpen}
+        onCollapse={setSidebarOpen}
+      >
         {sidebarContent}
       </Sidebar>
-      <div className="md:pl-[calc(var(--sidebar-width-icon))] transition-all duration-200 ease-linear group-data-[sidebar-collapsed=false]:md:pl-[var(--sidebar-width-icon)]">
+      <div
+        className={
+          isSidebarOpen
+            ? 'md:pl-[var(--sidebar-width)]'
+            : 'md:pl-[var(--sidebar-width-icon)]'
+        }
+      >
         <header className="sticky top-0 z-10 flex items-center h-14 bg-background/80 backdrop-blur-sm border-b px-4 md:hidden">
-            <SidebarTrigger asChild>
-                <Button variant="ghost" size="icon">
-                    <Menu />
-                </Button>
-            </SidebarTrigger>
-            <div className="ml-4">
-                <Logo />
-            </div>
+          <SidebarTrigger>{sidebarContent}</SidebarTrigger>
+          <div className="ml-4">
+            <Logo />
+          </div>
         </header>
         <main className="p-4 sm:p-6 md:p-8">{children}</main>
       </div>
