@@ -59,9 +59,8 @@ const generateAiCompanionResponseFlow = ai.defineFlow(
       model: ai.model,
       history: [
         ...history,
-        { role: 'user', content: [{ text: message }] }
+        { role: 'user', content: message }
       ],
-      prompt: '',
       config: {
         systemPrompt: systemPrompt,
       },
