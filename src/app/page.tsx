@@ -40,42 +40,44 @@ export default function DashboardPage() {
 
   return (
     <div className="flex flex-col gap-8">
-      <div className="flex justify-between items-start">
-        <div>
-          <h1 className="text-3xl font-bold tracking-tight font-headline">Welcome back!</h1>
-          <p className="text-muted-foreground">
-            {isToday ? "Here's your summary for today" : `Viewing data for ${format(selectedDate, 'EEEE, MMMM d')}`}
-          </p>
+      <div className="animate-fade-in-up">
+        <div className="flex justify-between items-start">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight font-headline">Welcome back!</h1>
+            <p className="text-muted-foreground">
+              {isToday ? "Here's your summary for today" : `Viewing data for ${format(selectedDate, 'EEEE, MMMM d')}`}
+            </p>
+          </div>
+          <Popover>
+            <PopoverTrigger asChild>
+              <Button
+                variant={'outline'}
+                className={cn(
+                  'w-[280px] justify-start text-left font-normal',
+                  !selectedDate && 'text-muted-foreground'
+                )}
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                {format(selectedDate, 'PPP')}
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={(date) => setSelectedDate(date || new Date())}
+                disabled={(date) =>
+                  date > new Date() || date < new Date('2000-01-01')
+                }
+                initialFocus
+              />
+            </PopoverContent>
+          </Popover>
         </div>
-        <Popover>
-          <PopoverTrigger asChild>
-            <Button
-              variant={'outline'}
-              className={cn(
-                'w-[280px] justify-start text-left font-normal',
-                !selectedDate && 'text-muted-foreground'
-              )}
-            >
-              <CalendarIcon className="mr-2 h-4 w-4" />
-              {format(selectedDate, 'PPP')}
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-auto p-0">
-            <Calendar
-              mode="single"
-              selected={selectedDate}
-              onSelect={(date) => setSelectedDate(date || new Date())}
-              disabled={(date) =>
-                date > new Date() || date < new Date('2000-01-01')
-              }
-              initialFocus
-            />
-          </PopoverContent>
-        </Popover>
       </div>
 
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-        <Card>
+        <Card className="animate-fade-in-up transition-transform duration-300 ease-in-out hover:scale-105" style={{ animationDelay: '0.1s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Weekly Average</CardTitle>
             <TrendingUp className="h-4 w-4 text-muted-foreground" />
@@ -89,7 +91,7 @@ export default function DashboardPage() {
             </p>
           </CardContent>
         </Card>
-        <Card>
+        <Card className="animate-fade-in-up transition-transform duration-300 ease-in-out hover:scale-105" style={{ animationDelay: '0.2s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Journaling Streak</CardTitle>
             <Zap className="h-4 w-4 text-muted-foreground" />
@@ -99,7 +101,7 @@ export default function DashboardPage() {
             <p className="text-xs text-muted-foreground">Keep it up!</p>
           </CardContent>
         </Card>
-        <Card className="md:col-span-2 lg:col-span-1">
+        <Card className="md:col-span-2 lg:col-span-1 animate-fade-in-up transition-transform duration-300 ease-in-out hover:scale-105" style={{ animationDelay: '0.3s' }}>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Entries</CardTitle>
             <CalendarDays className="h-4 w-4 text-muted-foreground" />
@@ -111,7 +113,7 @@ export default function DashboardPage() {
         </Card>
       </div>
 
-      <Card>
+      <Card className="animate-fade-in-up" style={{ animationDelay: '0.4s' }}>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Smile size={24} />
