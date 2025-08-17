@@ -12,3 +12,8 @@ export interface Settings {
   enableAiInsights: boolean;
   theme: Theme;
 }
+
+export interface ChatMessage {
+  role: 'user' | 'model';
+  content: string;
+}

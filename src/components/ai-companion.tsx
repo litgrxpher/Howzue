@@ -4,56 +4,69 @@
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Form,
   FormControl,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from '@/components/ui/form';
-import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { Loader2, Sparkles, Info, Bot } from 'lucide-react';
-import { classifyEntryIntent } from '@/ai/flows/classify-entry-intent';
+import { Loader2, Sparkles, Info, Bot, User } from 'lucide-react';
 import { generateAiCompanionResponse } from '@/ai/flows/generate-ai-companion-response';
+import type { ChatMessage } from '@/lib/types';
+import { cn } from '@/lib/utils';
+import { ScrollArea } from './ui/scroll-area';
 
 const companionFormSchema = z.object({
-  journalEntry: z.string().min(10, {
-    message: 'Please enter at least 10 characters to get a response.',
+  message: z.string().min(1, {
+    message: 'Message cannot be empty.',
   }),
 });
 
 type CompanionFormValues = z.infer<typeof companionFormSchema>;
 
 export function AiCompanion() {
-  const [aiResponse, setAiResponse] = useState('');
+  const [messages, setMessages] = useState<ChatMessage[]>([
+    { role: 'model', content: "Hello! How are you feeling today? You can share your thoughts with me." }
+  ]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const scrollAreaRef = useRef<HTMLDivElement>(null);
 
   const form = useForm<CompanionFormValues>({
     resolver: zodResolver(companionFormSchema),
     defaultValues: {
-      journalEntry: '',
+      message: '',
     },
   });
+  
+  useEffect(() => {
+    if (scrollAreaRef.current) {
+      scrollAreaRef.current.scrollTo({
+        top: scrollAreaRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
+  }, [messages]);
 
   async function onSubmit(data: CompanionFormValues) {
     setIsLoading(true);
     setError('');
-    setAiResponse('');
+
+    const newMessages: ChatMessage[] = [...messages, { role: 'user', content: data.message }];
+    setMessages(newMessages);
+    form.reset();
 
     try {
-      const { intent } = await classifyEntryIntent({ journalEntry: data.journalEntry });
-      
-      if (intent === 'emotional' || intent === 'reflective') {
-        const result = await generateAiCompanionResponse({ journalEntry: data.journalEntry });
-        setAiResponse(result.aiResponse);
-      } else {
-        setAiResponse("I am here to support you with your emotional and reflective thoughts. It seems like this entry is about something else. Would you like to write about your feelings?");
-      }
+        const result = await generateAiCompanionResponse({ 
+            history: messages,
+            message: data.message 
+        });
+        setMessages([...newMessages, { role: 'model', content: result.aiResponse }]);
     } catch (e) {
       console.error(e);
       setError('Sorry, something went wrong. Please try again later.');
@@ -63,51 +76,77 @@ export function AiCompanion() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="flex flex-col h-[60vh]">
+      <ScrollArea className="flex-grow p-4 border rounded-lg mb-4" ref={scrollAreaRef}>
+        <div className="space-y-4">
+          {messages.map((message, index) => (
+            <div
+              key={index}
+              className={cn(
+                'flex items-start gap-3',
+                message.role === 'user' ? 'justify-end' : 'justify-start'
+              )}
+            >
+              {message.role === 'model' && (
+                <div className="p-2 bg-muted rounded-full">
+                  <Bot className="w-5 h-5 text-primary" />
+                </div>
+              )}
+              <div
+                className={cn(
+                  'p-3 rounded-lg max-w-sm',
+                  message.role === 'user'
+                    ? 'bg-primary text-primary-foreground'
+                    : 'bg-muted'
+                )}
+              >
+                <p className="text-sm whitespace-pre-wrap">{message.content}</p>
+              </div>
+              {message.role === 'user' && (
+                 <div className="p-2 bg-muted rounded-full">
+                    <User className="w-5 h-5 text-foreground" />
+                </div>
+              )}
+            </div>
+          ))}
+           {isLoading && (
+            <div className="flex items-start gap-3 justify-start">
+              <div className="p-2 bg-muted rounded-full">
+                  <Bot className="w-5 h-5 text-primary" />
+              </div>
+              <div className="p-3 rounded-lg bg-muted">
+                <Loader2 className="w-5 h-5 animate-spin" />
+              </div>
+            </div>
+          )}
+        </div>
+      </ScrollArea>
+
       <Form {...form}>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={form.handleSubmit(onSubmit)} className="flex gap-2">
           <FormField
             control={form.control}
-            name="journalEntry"
+            name="message"
             render={({ field }) => (
-              <FormItem>
-                <FormLabel>Share what's on your mind</FormLabel>
+              <FormItem className="flex-grow">
                 <FormControl>
-                  <Textarea
-                    placeholder="Tell me about your feelings, your day, or anything you're reflecting on..."
-                    className="resize-y min-h-[150px]"
-                    {...field}
-                  />
+                  <Input placeholder="Share what's on your mind..." {...field} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
             )}
           />
           <Button type="submit" disabled={isLoading}>
-            {isLoading ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Sparkles className="mr-2 h-4 w-4" />
-            )}
-            Get Response
+            <Sparkles className="mr-2 h-4 w-4" />
+            Send
           </Button>
         </form>
       </Form>
 
       {error && (
-        <Alert variant="destructive">
+        <Alert variant="destructive" className="mt-4">
           <AlertTitle>Error</AlertTitle>
           <AlertDescription>{error}</AlertDescription>
-        </Alert>
-      )}
-
-      {aiResponse && (
-        <Alert>
-          <Bot className="h-4 w-4" />
-          <AlertTitle>AI Companion's Response</AlertTitle>
-          <AlertDescription>
-            <p className="whitespace-pre-wrap">{aiResponse}</p>
-          </AlertDescription>
         </Alert>
       )}
 
