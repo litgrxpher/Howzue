@@ -11,13 +11,18 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import {generate} from 'genkit/generate';
 
 const GenerateAiCompanionResponseInputSchema = z.object({
-  history: z.array(z.object({
-    role: z.enum(['user', 'model']),
-    content: z.string(),
-  })).describe('The conversation history.'),
-  message: z.string().describe('The user\'s latest message.'),
+  history: z
+    .array(
+      z.object({
+        role: z.enum(['user', 'model']),
+        content: z.string(),
+      })
+    )
+    .describe('The conversation history.'),
+  message: z.string().describe("The user's latest message."),
 });
 
 export type GenerateAiCompanionResponseInput = z.infer<typeof GenerateAiCompanionResponseInputSchema>;
@@ -28,32 +33,19 @@ const GenerateAiCompanionResponseOutputSchema = z.object({
 
 export type GenerateAiCompanionResponseOutput = z.infer<typeof GenerateAiCompanionResponseOutputSchema>;
 
-export async function generateAiCompanionResponse(input: GenerateAiCompanionResponseInput): Promise<GenerateAiCompanionResponseOutput> {
+export async function generateAiCompanionResponse(
+  input: GenerateAiCompanionResponseInput
+): Promise<GenerateAiCompanionResponseOutput> {
   return generateAiCompanionResponseFlow(input);
 }
 
-const prompt = ai.definePrompt({
-  name: 'generateAiCompanionResponsePrompt',
-  input: {schema: GenerateAiCompanionResponseInputSchema},
-  output: {schema: GenerateAiCompanionResponseOutputSchema},
-  prompt: `You are an AI companion designed to provide thoughtful and supportive responses to a user about their feelings.
+const systemPrompt = `You are an AI companion designed to provide thoughtful and supportive responses to a user about their feelings.
 
-  Your goal is to help the user gain a deeper understanding of their emotions through empathetic conversation.
+Your goal is to help the user gain a deeper understanding of their emotions through empathetic conversation.
 
-  - Only respond to emotional or reflective topics.
-  - If the conversation turns to non-emotional topics, you must gently guide it back by asking about their feelings or responding with a supportive statement like: "I'm here to talk about your feelings. How are you doing emotionally?" or "That's interesting, but I'd like to focus on you. How have you been feeling lately?". Do not answer off-topic questions.
-  - If the user expresses thoughts of self-harm or harm to others, you MUST respond with: "It sounds like you are going through a difficult time. Please consider reaching out to a crisis hotline or a mental health professional. They are equipped to provide the support you need."
-
-  Conversation History:
-  {{#each history}}
-  {{#if (eq role 'user')}}User: {{content}}{{/if}}
-  {{#if (eq role 'model')}}AI: {{content}}{{/if}}
-  {{/each}}
-
-  New User Message: {{message}}
-
-  AI Companion Response:`,
-});
+- Only respond to emotional or reflective topics.
+- If the conversation turns to non-emotional topics, you must gently guide it back by asking about their feelings or responding with a supportive statement like: "I'm here to talk about your feelings. How are you doing emotionally?" or "That's interesting, but I'd like to focus on you. How have you been feeling lately?". Do not answer off-topic questions.
+- If the user expresses thoughts of self-harm or harm to others, you MUST respond with: "It sounds like you are going through a difficult time. Please consider reaching out to a crisis hotline or a mental health professional. They are equipped to provide the support you need."`;
 
 const generateAiCompanionResponseFlow = ai.defineFlow(
   {
@@ -62,7 +54,21 @@ const generateAiCompanionResponseFlow = ai.defineFlow(
     outputSchema: GenerateAiCompanionResponseOutputSchema,
   },
   async input => {
-    const {output} = await prompt(input);
-    return output!;
+    const {history, message} = input;
+    const {output} = await generate({
+      model: ai.model,
+      history: [
+        ...history,
+        { role: 'user', content: message }
+      ],
+      prompt: '',
+      config: {
+        systemPrompt: systemPrompt,
+      },
+    });
+
+    return {
+      aiResponse: output as string,
+    };
   }
 );
