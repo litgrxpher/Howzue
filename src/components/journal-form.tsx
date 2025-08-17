@@ -111,7 +111,7 @@ export function JournalForm({ initialMood, onSave }: JournalFormProps) {
             </FormItem>
           )}
         />
-        <Button type="submit">Save Entry</Button>
+        <Button type="submit">Save your thought!</Button>
       </form>
     </Form>
   );
