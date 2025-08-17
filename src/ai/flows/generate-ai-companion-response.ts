@@ -10,7 +10,7 @@
  */
 
 import {ai} from '@/ai/genkit';
-import {z, generate} from 'genkit';
+import {z} from 'genkit';
 
 
 const GenerateAiCompanionResponseInputSchema = z.object({
@@ -55,11 +55,11 @@ const generateAiCompanionResponseFlow = ai.defineFlow(
   },
   async input => {
     const {history, message} = input;
-    const {text} = await generate({
+    const {text} = await ai.generate({
       model: ai.model,
       history: [
         ...history,
-        { role: 'user', content: message }
+        { role: 'user', content: [{ text: message }] }
       ],
       prompt: '',
       config: {
