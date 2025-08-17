@@ -53,7 +53,7 @@ export default function DashboardPage() {
               <Button
                 variant={'outline'}
                 className={cn(
-                  'w-full sm:w-[280px] justify-start text-left font-normal shadow-sm text-base',
+                  'w-full sm:w-[280px] justify-start text-left font-normal shadow-sm text-base bg-card hover:bg-accent/10 border-primary/50 text-primary hover:text-primary',
                   !selectedDate && 'text-muted-foreground'
                 )}
               >
