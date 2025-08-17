@@ -42,7 +42,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   }, [isMobile]);
 
   const handleCollapse = (collapsed: boolean) => {
-    setSidebarOpen(!collapsed);
+    setSidebarOpen(collapsed);
   };
   
   const sidebarContent = (

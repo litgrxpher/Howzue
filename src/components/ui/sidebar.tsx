@@ -2,7 +2,7 @@
 "use client"
 
 import * as React from "react"
-import { MoreHorizontal, X } from "lucide-react"
+import { ChevronsLeft, X } from "lucide-react"
 
 import { cn } from "@/lib/utils"
 import {
@@ -104,7 +104,7 @@ export const Sidebar = React.forwardRef<
     const { isMobile } = useSidebar();
     
     const handleCollapse = React.useCallback(() => {
-        onCollapse?.(isCollapsed);
+        onCollapse?.(!isCollapsed);
     },[isCollapsed, onCollapse])
 
     if (isMobile) {
@@ -164,14 +164,14 @@ const SidebarCollapse = (props: {
       variant="ghost"
       size="icon"
       className={cn(
-        "absolute bottom-2 z-50",
-        props.side === "left" && "left-2",
-        props.side === "right" && "right-2",
+        "absolute bottom-4 z-50 transition-all duration-300 ease-in-out",
+        "right-2",
+        props.isCollapsed && "rotate-180",
         props.collapsible === "button" && "sm:hidden"
       )}
       onClick={props.onCollapse}
     >
-      <MoreHorizontal />
+      <ChevronsLeft />
     </Button>
   )
 }
