@@ -58,7 +58,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   const router = useRouter();
   const isMobile = useIsMobile();
   const [isSidebarOpen, setIsSidebarOpen] = React.useState(false);
-  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(isMobile);
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = React.useState(isMobile ?? false);
   
   useEffect(() => {
     if (isAuthLoaded && !user) {
@@ -92,8 +92,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     )
   }
 
+  const effectiveIsCollapsed = isMobile ? false : isSidebarCollapsed;
+
   return (
-    <SidebarProvider isCollapsed={isSidebarCollapsed || false} isMobile={isMobile || false}>
+    <SidebarProvider isCollapsed={effectiveIsCollapsed || false} isMobile={isMobile || false}>
         <Sidebar
             isOpen={isSidebarOpen}
             onOpenChange={setIsSidebarOpen}
@@ -112,7 +114,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             )}
         >
             <header className="sticky top-0 z-10 flex items-center h-14 bg-background/80 backdrop-blur-sm border-b px-4 md:hidden">
-            <SidebarTrigger asChild>
+            <SidebarTrigger asChild onClick={() => setIsSidebarOpen(true)}>
                 <Button variant="ghost" size="icon">
                     <Menu />
                 </Button>

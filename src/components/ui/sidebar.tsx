@@ -354,12 +354,8 @@ export const SidebarMenuButton = React.forwardRef<
 SidebarMenuButton.displayName = "SidebarMenuButton"
 
 export const SidebarTrigger = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ onClick, ...props }, ref) => {
-    const { onOpenChange } =
-      React.useContext(SidebarContext) as any
-    const { ...rest } = props
-    
-    return <Button ref={ref} {...rest} onClick={onClick} />
+  (props, ref) => {
+    return <Button ref={ref} {...props} />
   }
 )
 
