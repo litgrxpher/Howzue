@@ -4,7 +4,7 @@
 import React, { useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import Link from 'next/link';
-import { Home, Book, BarChart2, Settings, Menu, Bot } from 'lucide-react';
+import { Home, Book, BarChart2, Settings, Menu } from 'lucide-react';
 import {
   Sidebar,
   SidebarHeader,
@@ -26,7 +26,6 @@ const navItems = [
   { href: '/', label: 'Dashboard', icon: Home },
   { href: '/journal', label: 'Journal', icon: Book },
   { href: '/insights', label: 'Insights', icon: BarChart2 },
-  { href: '/companion', label: 'AI Companion', icon: Bot },
   { href: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -113,7 +112,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             )}
         >
             <header className="sticky top-0 z-10 flex items-center h-14 bg-background/80 backdrop-blur-sm border-b px-4 md:hidden">
-            <SidebarTrigger asChild>
+            <SidebarTrigger asChild onClick={() => setIsSidebarOpen(true)}>
                 <Button variant="ghost" size="icon">
                     <Menu />
                 </Button>
