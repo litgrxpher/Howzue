@@ -99,7 +99,7 @@ export default function LoginPage() {
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background p-4">
-      <div className="absolute top-4 left-4 sm:top-8 sm:left-8">
+      <div className="absolute top-4 right-4 sm:top-8 sm:right-8">
         <Logo />
       </div>
       <Tabs defaultValue="login" className="w-full max-w-sm">
