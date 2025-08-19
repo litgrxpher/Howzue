@@ -22,19 +22,24 @@ export const defaultSettings: Settings = {
   theme: 'system',
 };
 
-const useLocalStore = <T>(key: string, initialValue: T): [T, (value: T) => void] => {
-  const [storedValue, setStoredValue] = useState<T>(() => {
+const useLocalStore = <T>(key: string, initialValue: T): [T, (value: T) => void, boolean] => {
+  const [isLoaded, setIsLoaded] = useState(false);
+  const [storedValue, setStoredValue] = useState<T>(initialValue);
+
+  useEffect(() => {
     try {
-      if (typeof window === 'undefined') {
-        return initialValue;
+      if (typeof window !== 'undefined') {
+        const item = window.localStorage.getItem(key);
+        if (item) {
+          setStoredValue(JSON.parse(item));
+        }
       }
-      const item = window.localStorage.getItem(key);
-      return item ? JSON.parse(item) : initialValue;
     } catch (error) {
       console.error(error);
-      return initialValue;
+    } finally {
+        setIsLoaded(true);
     }
-  });
+  }, [key]);
 
   const setValue = (value: T) => {
     try {
@@ -48,19 +53,31 @@ const useLocalStore = <T>(key: string, initialValue: T): [T, (value: T) => void]
     }
   };
 
-  return [storedValue, setValue];
+  return [storedValue, setValue, isLoaded];
 };
 
 
 export const useApp = () => {
-  const { user } = useAuth();
-  const [entries, setEntries] = useLocalStore<JournalEntry[]>(`howzue-entries-${user?.id || 'guest'}`, []);
-  const [settings, setSettings] = useLocalStore<Settings>('howzue-settings', defaultSettings);
-  const [isStoreLoaded, setIsStoreLoaded] = useState(false);
-
+  const { user, isAuthLoaded } = useAuth();
+  const storageKey = useMemo(() => `howzue-entries-${user?.id || 'guest'}`, [user]);
+  
+  const [entries, setEntries, areEntriesLoaded] = useLocalStore<JournalEntry[]>(storageKey, []);
+  const [settings, setSettings, areSettingsLoaded] = useLocalStore<Settings>('howzue-settings', defaultSettings);
+  
+  // This effect synchronizes the data when the user changes
   useEffect(() => {
-    setIsStoreLoaded(true);
-  }, []);
+    if (isAuthLoaded) {
+      const currentKey = `howzue-entries-${user?.id || 'guest'}`;
+      if (storageKey !== currentKey) {
+          // This part is tricky because useLocalStore is tied to its initial key.
+          // A full implementation might need a provider-level reload or a more dynamic hook.
+          // For now, let's ensure the key change triggers a state update.
+          const data = localStorage.getItem(currentKey);
+          setEntries(data ? JSON.parse(data) : []);
+      }
+    }
+  }, [user, isAuthLoaded, setEntries, storageKey]);
+
 
   const addEntry = useCallback(async (newEntryData: { mood: Mood; text: string }) => {
     const newEntry: JournalEntry = {
@@ -132,7 +149,7 @@ export const useApp = () => {
   }, [entries]);
 
   return {
-    entries,
+    entries: areEntriesLoaded && isAuthLoaded ? entries : [],
     settings,
     streak,
     weeklyAverageMood,

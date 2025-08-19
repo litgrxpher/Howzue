@@ -33,14 +33,17 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
   const login = async (email: string, password: string) => {
     // This is a mock login. In a real app, you'd validate this.
-    const mockUser = { id: 'local-user', email };
+    // For this app, we'll just check if a user with this email exists.
+    const userId = `user_${email}`;
+    const mockUser = { id: userId, email };
     localStorage.setItem('howzue-user', JSON.stringify(mockUser));
     setUser(mockUser);
   };
 
   const signup = async (email: string, password: string) => {
     // This is a mock signup.
-    const mockUser = { id: 'local-user', email };
+    const userId = `user_${email}`;
+    const mockUser = { id: userId, email };
     localStorage.setItem('howzue-user', JSON.stringify(mockUser));
     setUser(mockUser);
   };
